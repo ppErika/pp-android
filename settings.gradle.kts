@@ -15,4 +15,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "PP"
 include(":app")
- 
+include(":data")
+include(":domain")
