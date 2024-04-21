@@ -22,6 +22,7 @@ class MainActivity : BaseActivity<MainViewModel>() {
 
     @Composable
     override fun ComposeUi() {
+
     }
 
     override fun init() {
