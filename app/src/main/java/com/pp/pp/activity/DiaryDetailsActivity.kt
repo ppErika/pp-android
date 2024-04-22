@@ -124,7 +124,7 @@ class DiaryDetailsActivity : BaseActivity<DiaryDetailsViewModel>() {
                             .fillMaxWidth()
                             .height(258.dp)
                             .background(
-                                brush = Brush.horizontalGradient(listOf(Color.Red, Color.Blue)),
+                                brush = Brush.horizontalGradient(listOf(Color.White, Color.White)),
                                 RoundedCornerShape(10.dp),
                             )
                     ) {
@@ -157,7 +157,7 @@ class DiaryDetailsActivity : BaseActivity<DiaryDetailsViewModel>() {
                                             color_ebebf4,
                                             RoundedCornerShape(10.dp)
                                         ),
-                                    painter = painterResource(id = R.drawable.img_empty),
+                                    painter = painterResource(id = R.drawable.ic_logo),
                                     contentDescription = null
                                 )
 
@@ -169,7 +169,7 @@ class DiaryDetailsActivity : BaseActivity<DiaryDetailsViewModel>() {
                                             color_ebebf4,
                                             RoundedCornerShape(10.dp)
                                         ),
-                                    painter = painterResource(id = R.drawable.img_empty),
+                                    painter = painterResource(id = R.drawable.ic_logo),
                                     contentDescription = null
                                 )
                             }
