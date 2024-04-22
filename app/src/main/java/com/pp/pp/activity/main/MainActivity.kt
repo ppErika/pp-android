@@ -6,7 +6,9 @@ import androidx.compose.runtime.Composable
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.pp.pp.viewmodel.MainViewModel
 import com.pp.pp.base.BaseActivity
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : BaseActivity<MainViewModel>() {
     override val viewModel: MainViewModel by viewModels()
     override fun observerViewModel() {
@@ -23,6 +25,7 @@ class MainActivity : BaseActivity<MainViewModel>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
+        mViewModel.testApi()
     }
 
 }
