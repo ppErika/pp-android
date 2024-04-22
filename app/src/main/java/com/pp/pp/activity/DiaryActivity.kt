@@ -1,4 +1,4 @@
-package com.pp.pp.diary
+package com.pp.pp.activity
 
 import androidx.activity.viewModels
 import androidx.compose.foundation.Image
@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.pp.pp.R
 import com.pp.pp.base.BaseActivity
+import com.pp.pp.viewmodel.DiaryViewModel
 import com.pp.pp.ui.CommonCompose
 import com.pp.pp.ui.getRobotoFontFamily
 import com.pp.pp.ui.theme.color_d9d9d9

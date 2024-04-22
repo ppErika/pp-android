@@ -1,4 +1,4 @@
-package com.pp.pp
+package com.pp.pp.viewmodel
 
 import com.pp.pp.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
