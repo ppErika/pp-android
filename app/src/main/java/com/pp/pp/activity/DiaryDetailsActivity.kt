@@ -28,6 +28,8 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -74,7 +76,7 @@ class DiaryDetailsActivity : BaseActivity<DiaryDetailsViewModel>() {
     @Composable
     override fun ComposeUi() {
         val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-        var text by remember { mutableStateOf("Hello") }
+        var showMenu by remember { mutableStateOf(false) }
 
         Scaffold(
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -92,10 +94,18 @@ class DiaryDetailsActivity : BaseActivity<DiaryDetailsViewModel>() {
                         }
                     },
                     actions = {
-                        IconButton(onClick = { /* do something */ }) {
+                        IconButton(onClick = { showMenu = !showMenu }) {
                             Icon(
                                 imageVector = Icons.Filled.MoreVert,
                                 contentDescription = "Localized description"
+                            )
+                        }
+                        DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
+                            DropdownMenuItem(
+                                text = {
+                                    Text(text = stringResource(id = R.string.btn_delete))
+                                },
+                                onClick = { /*TODO*/ }
                             )
                         }
                     },
