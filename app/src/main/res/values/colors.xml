@@ -8,4 +8,5 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="main_color">#000B70</color>
+    <color name="background_upload_image">#F3F3F3</color>
 </resources>
