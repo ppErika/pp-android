@@ -1,4 +1,4 @@
-package com.pp.pp.viewmodel
+package com.pp.pp.viewmodel.main
 
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf

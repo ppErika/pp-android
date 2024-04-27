@@ -27,12 +27,13 @@ import androidx.navigation.compose.rememberNavController
 import com.pp.pp.R
 import com.pp.pp.activity.main.route.MainNav
 import com.pp.pp.activity.main.ui.DiaryScreen
+import com.pp.pp.activity.main.ui.LoginScreen
 import com.pp.pp.activity.main.ui.SettingScreen
 import com.pp.pp.base.BaseActivity
 import com.pp.pp.ui.CommonCompose
 import com.pp.pp.ui.theme.color_000b70
 import com.pp.pp.ui.theme.color_white
-import com.pp.pp.viewmodel.MainViewModel
+import com.pp.pp.viewmodel.main.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -61,7 +62,8 @@ class MainActivity : BaseActivity<MainViewModel>() {
                 // 커뮤니티
                 composable(route = MainNav.Community.name) {
                     mViewModel.setAppBarTitle(MainNav.Community.name)
-                    DiaryScreen()
+//                    DiaryScreen()
+                    LoginScreen()
                 }
                 // 설정
                 composable(route = MainNav.Setting.name) {
