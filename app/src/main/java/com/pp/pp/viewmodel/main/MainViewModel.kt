@@ -1,6 +1,7 @@
-package com.pp.pp.viewmodel
+package com.pp.pp.viewmodel.main
 
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import com.pp.domain.model.token.OauthTokenRequest
 import com.pp.domain.usecase.token.OauthTokenUseCase
@@ -13,6 +14,12 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val oauthTokenUseCase: OauthTokenUseCase
 ) : BaseViewModel() {
+    var appBarTitle = mutableStateOf("My Wallet")
+        private set
+
+    fun setAppBarTitle(title: String) {
+        appBarTitle.value = title
+    }
 
     fun testApi() {
         viewModelScope.launch {
