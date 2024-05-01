@@ -22,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.pp.pp.R
+import com.pp.pp.activity.main.ui.DiaryListUI
 import com.pp.pp.base.BaseActivity
 import com.pp.pp.viewmodel.DiaryViewModel
 import com.pp.pp.ui.CommonCompose
@@ -62,54 +63,3 @@ class DiaryActivity : BaseActivity<DiaryViewModel>() {
     }
 }
 
-@Composable
-fun DiaryListUI() {
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2)
-    ) {
-        items(
-            listOf(
-                1,2,3,4,5,6,67,7,8,8,9,9,0,233,4,45,65,7,89,9,5,323,2,4,65,677,78
-            )
-        ) {
-            DiaryItemUI()
-        }
-    }
-}
-
-@Composable
-fun DiaryItemUI() {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(10.dp)
-            .background(shape = RoundedCornerShape(10.dp), color = color_white)
-    ) {
-        Box(
-            modifier = Modifier
-                .height(118.dp)
-                .fillMaxWidth()
-                .background(
-                    shape = RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp),
-                    color = color_d9d9d9
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-            Image(
-                painterResource(id = R.drawable.img_empty), contentDescription = null
-            )
-        }
-        Text(
-            modifier = Modifier.padding(start = 10.dp),
-            text = "바다거북이 본 날",
-            fontSize = 15.sp,
-            fontFamily = getRobotoFontFamily()
-        )
-        Text(
-            modifier = Modifier.padding(start = 10.dp),
-            text = "2024.03.30",
-            fontSize = 12.sp,
-            fontFamily = getRobotoFontFamily()
-        )
-    }
-}

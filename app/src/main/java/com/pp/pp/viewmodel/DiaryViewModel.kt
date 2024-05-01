@@ -5,7 +5,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class DiaryViewModel @Inject constructor(): BaseViewModel(){
+class DiaryViewModel @Inject constructor() : BaseViewModel() {
     override fun onError(msg: String) {
         TODO("Not yet implemented")
     }
