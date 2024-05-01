@@ -1,4 +1,4 @@
-import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 
 plugins {
     id("com.android.application")
@@ -22,6 +22,7 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+        buildConfigField("String","KAKAO_API_KEY", gradleLocalProperties(rootDir,providers).getProperty("KAKAO_API_KEY"))
     }
 
     buildTypes {
@@ -42,6 +43,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.3"
@@ -84,11 +86,14 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.okhttp.urlconnection)
     implementation(libs.converter.gson)
-    implementation(libs.okhttp.bom)
+    implementation(platform(libs.okhttp.bom))
     implementation(libs.okhttp)
     implementation(libs.logging.interceptor)
     implementation(libs.retrofit2.kotlin.coroutines.adapter)
 
     // compose navigation
     implementation(libs.navigation.compose)
+
+    // kakao login
+    implementation(libs.kakao.sdk.v2.user)
 }
