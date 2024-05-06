@@ -17,11 +17,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.pp.pp.ui.CustomModifier.removeEffectClickable
 import com.pp.pp.ui.getRobotoFontFamily
 import com.pp.pp.ui.theme.color_fdd73f
 
 @Composable
-fun LoginScreen() {
+fun LoginScreen(
+    loginClickEvent:()->Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -42,6 +45,9 @@ fun LoginScreen() {
         )
         Row(
             modifier = Modifier
+                .removeEffectClickable {
+                    loginClickEvent()
+                }
                 .fillMaxWidth()
                 .padding(top = 30.dp)
                 .background(color = color_fdd73f, shape = RoundedCornerShape(10.dp))

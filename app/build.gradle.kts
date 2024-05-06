@@ -17,12 +17,13 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
         buildConfigField("String","KAKAO_API_KEY", gradleLocalProperties(rootDir,providers).getProperty("KAKAO_API_KEY"))
+        manifestPlaceholders["KAKAO_API_KEY"] = gradleLocalProperties(rootDir,providers).getProperty("KAKAO_API_KEY_PLAIN")
+
     }
 
     buildTypes {

@@ -1,6 +1,7 @@
 package com.pp.pp.activity.main
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,9 +22,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.kakao.sdk.user.UserApiClient
 import com.pp.pp.R
 import com.pp.pp.activity.main.route.MainNav
 import com.pp.pp.activity.main.ui.DiaryScreen
@@ -35,11 +38,18 @@ import com.pp.pp.ui.theme.color_000b70
 import com.pp.pp.ui.theme.color_white
 import com.pp.pp.viewmodel.main.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 @AndroidEntryPoint
 class MainActivity : BaseActivity<MainViewModel>() {
     override val viewModel: MainViewModel by viewModels()
     override fun observerViewModel() {
+        mViewModel.run {
+            movePageEvent.onEach {
+
+            }.launchIn(this@MainActivity.lifecycleScope)
+        }
     }
 
     @Composable
@@ -47,6 +57,9 @@ class MainActivity : BaseActivity<MainViewModel>() {
         val navController = rememberNavController()
         val appBarTitle = remember {
             mViewModel.appBarTitle
+        }.value
+        val isLogin = remember {
+            mViewModel.isLogin
         }.value
         Column(Modifier.fillMaxSize()) {
             CommonCompose.CommonAppBarUI(title = appBarTitle, isBackPressed = false) {}
@@ -62,8 +75,13 @@ class MainActivity : BaseActivity<MainViewModel>() {
                 // 커뮤니티
                 composable(route = MainNav.Community.name) {
                     mViewModel.setAppBarTitle(MainNav.Community.name)
-//                    DiaryScreen()
-                    LoginScreen()
+                    when (isLogin) {
+                        true -> DiaryScreen()
+                        false -> LoginScreen() {
+                            kakaoLogin()
+                        }
+                    }
+
                 }
                 // 설정
                 composable(route = MainNav.Setting.name) {
@@ -117,7 +135,19 @@ class MainActivity : BaseActivity<MainViewModel>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mViewModel.testApi()
+    }
+
+    private fun kakaoLogin() {
+        UserApiClient.instance.loginWithKakaoAccount(this) { token, error ->
+            if (error != null) {
+                Log.e("EJ_LOG", "로그인 실패", error)
+            } else if (token != null) {
+                Log.i("EJ_LOG", "로그인 성공 ${token.accessToken}")
+                Log.i("EJ_LOG", "로그인 성공 ${token.idToken}")
+                Log.i("EJ_LOG", "로그인 성공 ${token.scopes}")
+                mViewModel.isUserRegistered(token.idToken ?: "")
+            }
+        }
     }
 
 }
