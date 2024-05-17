@@ -131,10 +131,15 @@ class MainActivity : BaseActivity<MainViewModel>() {
     }
 
     override fun init() {
+        initData()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+    }
+
+    private fun initData() {
+        mViewModel.getAccessToken()
     }
 
     private fun kakaoLogin() {
@@ -142,9 +147,6 @@ class MainActivity : BaseActivity<MainViewModel>() {
             if (error != null) {
                 Log.e("EJ_LOG", "로그인 실패", error)
             } else if (token != null) {
-                Log.i("EJ_LOG", "로그인 성공 ${token.accessToken}")
-                Log.i("EJ_LOG", "로그인 성공 ${token.idToken}")
-                Log.i("EJ_LOG", "로그인 성공 ${token.scopes}")
                 mViewModel.isUserRegistered(token.idToken ?: "")
             }
         }

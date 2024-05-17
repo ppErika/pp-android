@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import com.pp.domain.model.token.OauthTokenRequest
+import com.pp.domain.usecase.datastore.GetAccessTokenUseCase
+import com.pp.domain.usecase.datastore.SetAccessTokenUseCase
 import com.pp.domain.usecase.token.OauthTokenUseCase
 import com.pp.domain.usecase.users.UserRegisteredUseCase
 import com.pp.pp.base.BaseViewModel
@@ -15,7 +17,9 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val isUserRegisteredUseCase: UserRegisteredUseCase,
-    private val oauthTokenUseCase: OauthTokenUseCase
+    private val oauthTokenUseCase: OauthTokenUseCase,
+    private val setAccessTokenUseCase: SetAccessTokenUseCase,
+    private val getAccessTokenUseCase: GetAccessTokenUseCase
 ) : BaseViewModel() {
     var appBarTitle = mutableStateOf("My Wallet")
         private set
@@ -53,8 +57,26 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             val response = oauthTokenUseCase.execute(this@MainViewModel, oauthTokenRequest)
             response?.let {
-                isLogin.value = true
-                Log.d("EJ_LOG", "testApi response $it")
+                setAccessToken(it.access_token)
+            }
+        }
+    }
+    private fun setAccessToken(accessToken: String) {
+        viewModelScope.launch {
+            setAccessTokenUseCase.invoke(accessToken)
+        }
+        getAccessToken()
+    }
+
+    fun getAccessToken(){
+        viewModelScope.launch {
+            getAccessTokenUseCase.invoke().collect{
+                it?.let{
+                    isLogin.value = true
+                }?:{
+                    isLogin.value = false
+                }
+                Log.d("EJ_LOG","getAccessToken : $it")
             }
         }
     }

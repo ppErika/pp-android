@@ -97,4 +97,7 @@ dependencies {
 
     // kakao login
     implementation(libs.kakao.sdk.v2.user)
+
+    // data store
+    implementation(libs.androidx.datastore.preferences)
 }
