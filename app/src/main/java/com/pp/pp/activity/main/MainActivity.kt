@@ -1,5 +1,6 @@
 package com.pp.pp.activity.main
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
@@ -23,6 +24,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -32,6 +35,8 @@ import com.pp.pp.activity.main.route.MainNav
 import com.pp.pp.activity.main.ui.DiaryScreen
 import com.pp.pp.activity.main.ui.LoginScreen
 import com.pp.pp.activity.main.ui.SettingScreen
+import com.pp.pp.activity.main.ui.TermsOfUseScreen
+import com.pp.pp.activity.terms.TermsOfUseActivity
 import com.pp.pp.base.BaseActivity
 import com.pp.pp.ui.CommonCompose
 import com.pp.pp.ui.theme.color_000b70
@@ -43,18 +48,25 @@ import kotlinx.coroutines.flow.onEach
 
 @AndroidEntryPoint
 class MainActivity : BaseActivity<MainViewModel>() {
+    private lateinit var navController: NavController
     override val viewModel: MainViewModel by viewModels()
     override fun observerViewModel() {
         mViewModel.run {
             movePageEvent.onEach {
-
+                when(it){
+                    "termsOfUse"->{
+                        val intent = Intent(this@MainActivity, TermsOfUseActivity::class.java)
+                        intent.putExtra("idToken", getKakaoIdToken())
+                        startActivity(intent)
+                    }
+                }
             }.launchIn(this@MainActivity.lifecycleScope)
         }
     }
 
     @Composable
     override fun ComposeUi() {
-        val navController = rememberNavController()
+        navController = rememberNavController()
         val appBarTitle = remember {
             mViewModel.appBarTitle
         }.value
@@ -65,7 +77,8 @@ class MainActivity : BaseActivity<MainViewModel>() {
             CommonCompose.CommonAppBarUI(title = appBarTitle, isBackPressed = false) {}
             NavHost(
                 modifier = Modifier.weight(1f),
-                navController = navController, startDestination = MainNav.MyDiary.name
+                navController = navController as NavHostController,
+                startDestination = MainNav.MyDiary.name
             ) {
                 // 나의 일기
                 composable(route = MainNav.MyDiary.name) {
@@ -81,7 +94,6 @@ class MainActivity : BaseActivity<MainViewModel>() {
                             kakaoLogin()
                         }
                     }
-
                 }
                 // 설정
                 composable(route = MainNav.Setting.name) {
@@ -102,9 +114,8 @@ class MainActivity : BaseActivity<MainViewModel>() {
                     Column(
                         modifier = Modifier
                             .padding(horizontal = 16.dp)
-                            .clickable { navController.navigate(item.name) },
+                            .clickable { moveNavigate(item.name) },
                         horizontalAlignment = Alignment.CenterHorizontally
-
                     ) {
                         Icon(
                             painter = when (item.name) {
@@ -152,4 +163,9 @@ class MainActivity : BaseActivity<MainViewModel>() {
         }
     }
 
+    private fun moveNavigate(destination: String) {
+        if (::navController.isInitialized) {
+            navController.navigate(destination)
+        }
+    }
 }

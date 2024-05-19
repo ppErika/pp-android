@@ -8,6 +8,7 @@ import com.pp.domain.usecase.datastore.GetAccessTokenUseCase
 import com.pp.domain.usecase.datastore.SetAccessTokenUseCase
 import com.pp.domain.usecase.token.OauthTokenUseCase
 import com.pp.domain.usecase.users.UserRegisteredUseCase
+import com.pp.pp.activity.main.route.MainNav
 import com.pp.pp.base.BaseViewModel
 import com.pp.pp.widget.SingleFlowEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,8 +26,15 @@ class MainViewModel @Inject constructor(
         private set
     var isLogin = mutableStateOf(false)
         private set
+    var isSelectedTerms1 = mutableStateOf(false)
+        private set
+    var isSelectedTerms2 = mutableStateOf(false)
+        private set
+    var isSelectedTermsAll = mutableStateOf(false)
+        private set
     private val _movePageEvent = SingleFlowEvent<String>()
     val movePageEvent = _movePageEvent.flow
+    private var kakaoIdToken: String = ""
 
     fun setAppBarTitle(title: String) {
         appBarTitle.value = title
@@ -37,21 +45,23 @@ class MainViewModel @Inject constructor(
             val response = isUserRegisteredUseCase.execute(this@MainViewModel,"kakao",idToken)
             response?.let{
                 Log.d("EJ_LOG","isUserReigstered : $it")
+                setKakaoIdToken(idToken)
                 // true -> oauthToken 호출
                 // false -> 회원가입 페이지로 이동
-                when(it.data.isRegistered){
-                    true -> getOauthToken(idToken)
-                    false -> _movePageEvent.emit("termsOfUse")
-                }
+//                when(it.data.isRegistered){
+//                    true -> getOauthToken()
+//                    false -> _movePageEvent.emit("termsOfUse")
+//                }
+                _movePageEvent.emit("termsOfUse")
 
             }
         }
     }
 
-    fun getOauthToken(idToken: String) {
+    fun getOauthToken() {
         val oauthTokenRequest = OauthTokenRequest().apply {
             client_id = "kauth.kakao.com"
-            client_assertion = idToken
+            client_assertion = kakaoIdToken
             grant_type="client_credentials"
         }
         viewModelScope.launch {
@@ -79,5 +89,11 @@ class MainViewModel @Inject constructor(
                 Log.d("EJ_LOG","getAccessToken : $it")
             }
         }
+    }
+    fun setKakaoIdToken(idToken: String){
+        kakaoIdToken = idToken
+    }
+    fun getKakaoIdToken(): String{
+        return kakaoIdToken
     }
 }

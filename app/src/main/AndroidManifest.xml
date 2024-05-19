@@ -44,11 +44,11 @@
             android:name=".activity.DiaryActivity"
             android:theme="@style/Theme.PP"
             android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.terms.TermsOfUseActivity"
+            android:theme="@style/Theme.PP"
+            android:exported="true">
         </activity>
     </application>
 
