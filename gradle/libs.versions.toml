@@ -23,6 +23,8 @@ kotlinxCoroutines = "1.7.1"
 androidApplication = "8.3.2"
 kotlinAndroid = "1.8.10"
 kakao = "2.20.1"
+room = "2.6.1"
+roomCommon = "2.6.1"
 
 [libraries]
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -55,6 +57,10 @@ material = { group = "com.google.android.material", name = "material", version.r
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
 kakao-sdk-v2-user = { group = "com.kakao.sdk", name = "v2-user", version.ref = "kakao"}
+room-runtime = { group = "androidx.room", name = "room-runtime" }
+room-compiler = { group = "androidx.room", name = "room-compiler" }
+room-ktx = { group = "androidx.room", name = "room-ktx" }
+androidx-room-common = { group = "androidx.room", name = "room-common", version.ref = "roomCommon" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidApplication" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlinAndroid" }
