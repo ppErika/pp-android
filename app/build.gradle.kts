@@ -17,12 +17,13 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
         buildConfigField("String","KAKAO_API_KEY", gradleLocalProperties(rootDir,providers).getProperty("KAKAO_API_KEY"))
+        manifestPlaceholders["KAKAO_API_KEY"] = gradleLocalProperties(rootDir,providers).getProperty("KAKAO_API_KEY_PLAIN")
+
     }
 
     buildTypes {
@@ -74,6 +75,7 @@ dependencies {
     androidTestImplementation(libs.compose.ui.test.junit4)
     debugImplementation(libs.compose.ui.tooling)
     debugImplementation(libs.compose.ui.test.manifest)
+    implementation(libs.hilt.navigation.compose)
 
     // hilt
     implementation(libs.hilt.android)
@@ -96,4 +98,7 @@ dependencies {
 
     // kakao login
     implementation(libs.kakao.sdk.v2.user)
+
+    // data store
+    implementation(libs.androidx.datastore.preferences)
 }
