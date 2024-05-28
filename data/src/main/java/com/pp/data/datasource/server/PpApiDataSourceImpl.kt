@@ -2,6 +2,8 @@ package com.pp.data.datasource.server
 
 import com.pp.data.base.BaseRepository
 import com.pp.data.remote.api.PpApi
+import com.pp.domain.model.post.GetPostsRequest
+import com.pp.domain.model.post.GetPostsResponse
 import com.pp.domain.model.token.OauthTokenRequest
 import com.pp.domain.model.token.OauthTokenResponse
 import com.pp.domain.model.users.UserRegisteredResponse
@@ -38,6 +40,20 @@ class PpApiDataSourceImpl @Inject constructor(
             ppApi.userRegistered(
                 client = client,
                 idToken = idToken
+            )
+        }
+    }
+
+    override suspend fun getPosts(
+        remoteError: RemoteError,
+        accessToken: String,
+        getPostsRequest: GetPostsRequest
+    ): GetPostsResponse? {
+        return safeApiCallData(remoteError) {
+            ppApi.getPosts(
+                access_token = accessToken,
+                lastId = getPostsRequest.lastId,
+                limit = getPostsRequest.limit
             )
         }
     }

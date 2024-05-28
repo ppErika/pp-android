@@ -17,9 +17,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
+import com.pp.domain.model.post.PostModel
 import com.pp.pp.R
 import com.pp.pp.ui.getRobotoFontFamily
 import com.pp.pp.ui.theme.color_d9d9d9
@@ -27,37 +32,41 @@ import com.pp.pp.ui.theme.color_ebebf4
 import com.pp.pp.ui.theme.color_white
 
 @Composable
-fun DiaryScreen(){
+fun DiaryScreen(
+    communityPostList: List<PostModel>
+) {
     Box(
         modifier = Modifier
             .background(color = color_ebebf4)
             .fillMaxWidth()
             .fillMaxHeight()
     ) {
-        DiaryListUI()
+        DiaryListUI(communityPostList)
         Image(
             painterResource(id = R.drawable.ic_diary_upload_btn), contentDescription = null,
             modifier = Modifier.align(Alignment.BottomEnd)
         )
     }
 }
+
 @Composable
-fun DiaryListUI() {
+fun DiaryListUI(
+    communityPostList: List<PostModel>
+) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2)
     ) {
         items(
-            listOf(
-                1,2,3,4,5,6,67,7,8,8,9,9,0,233,4,45,65,7,89,9,5,323,2,4,65,677,78
-            )
+            communityPostList
         ) {
-            DiaryItemUI()
+            DiaryItemUI(it)
         }
     }
 }
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun DiaryItemUI() {
+fun DiaryItemUI(post: PostModel) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -74,19 +83,29 @@ fun DiaryItemUI() {
                 ),
             contentAlignment = Alignment.Center
         ) {
-            Image(
-                painterResource(id = R.drawable.img_empty), contentDescription = null
-            )
+            GlideImage(
+                model = post.thumbnailUrl,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
+            ) {
+
+                it.error(R.drawable.img_empty)
+                    .placeholder(R.drawable.img_empty)
+                    .load(post.thumbnailUrl)
+            }
         }
         Text(
             modifier = Modifier.padding(start = 10.dp),
-            text = "바다거북이 본 날",
+            text = post.title,
             fontSize = 15.sp,
             fontFamily = getRobotoFontFamily()
         )
         Text(
             modifier = Modifier.padding(start = 10.dp),
-            text = "2024.03.30",
+            text = post.createDate,
             fontSize = 12.sp,
             fontFamily = getRobotoFontFamily()
         )

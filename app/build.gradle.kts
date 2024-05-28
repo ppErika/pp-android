@@ -101,4 +101,7 @@ dependencies {
 
     // data store
     implementation(libs.androidx.datastore.preferences)
+
+    // compose glide
+    implementation(libs.bumptech.glide.compose)
 }

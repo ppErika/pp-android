@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -73,6 +74,12 @@ class MainActivity : BaseActivity<MainViewModel>() {
         val isLogin = remember {
             mViewModel.isLogin
         }.value
+        val communityPostList = remember{
+            mViewModel.communityPostList
+        }
+        LaunchedEffect(key1 = isLogin) {
+            mViewModel.getPostList()
+        }
         Column(Modifier.fillMaxSize()) {
             CommonCompose.CommonAppBarUI(title = appBarTitle, isBackPressed = false) {}
             NavHost(
@@ -83,13 +90,15 @@ class MainActivity : BaseActivity<MainViewModel>() {
                 // 나의 일기
                 composable(route = MainNav.MyDiary.name) {
                     mViewModel.setAppBarTitle(MainNav.MyDiary.name)
-                    DiaryScreen()
+                    DiaryScreen(emptyList())
                 }
                 // 커뮤니티
                 composable(route = MainNav.Community.name) {
                     mViewModel.setAppBarTitle(MainNav.Community.name)
                     when (isLogin) {
-                        true -> DiaryScreen()
+                        true -> DiaryScreen(
+                            communityPostList = communityPostList
+                        )
                         false -> LoginScreen() {
                             kakaoLogin()
                         }

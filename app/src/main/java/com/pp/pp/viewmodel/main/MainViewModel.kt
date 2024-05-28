@@ -1,18 +1,25 @@
 package com.pp.pp.viewmodel.main
 
 import android.util.Log
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
+import com.pp.domain.model.post.GetPostsRequest
+import com.pp.domain.model.post.PostModel
 import com.pp.domain.model.token.OauthTokenRequest
 import com.pp.domain.usecase.datastore.GetAccessTokenUseCase
 import com.pp.domain.usecase.datastore.SetAccessTokenUseCase
+import com.pp.domain.usecase.posts.GetPostsUseCase
 import com.pp.domain.usecase.token.OauthTokenUseCase
 import com.pp.domain.usecase.users.UserRegisteredUseCase
 import com.pp.pp.activity.main.route.MainNav
 import com.pp.pp.base.BaseViewModel
 import com.pp.pp.widget.SingleFlowEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -20,10 +27,16 @@ class MainViewModel @Inject constructor(
     private val isUserRegisteredUseCase: UserRegisteredUseCase,
     private val oauthTokenUseCase: OauthTokenUseCase,
     private val setAccessTokenUseCase: SetAccessTokenUseCase,
-    private val getAccessTokenUseCase: GetAccessTokenUseCase
+    private val getAccessTokenUseCase: GetAccessTokenUseCase,
+    private val getPostsUseCase: GetPostsUseCase
 ) : BaseViewModel() {
-    var appBarTitle = mutableStateOf("My Wallet")
+    // 공통
+    var appBarTitle = mutableStateOf("")
         private set
+    private val _movePageEvent = SingleFlowEvent<String>()
+    val movePageEvent = _movePageEvent.flow
+
+    // 로그인
     var isLogin = mutableStateOf(false)
         private set
     var isSelectedTerms1 = mutableStateOf(false)
@@ -32,10 +45,16 @@ class MainViewModel @Inject constructor(
         private set
     var isSelectedTermsAll = mutableStateOf(false)
         private set
-    private val _movePageEvent = SingleFlowEvent<String>()
-    val movePageEvent = _movePageEvent.flow
+
+    // 커뮤니티
+    var communityPostList = mutableStateListOf<PostModel>()
+        private set
+
     private var kakaoIdToken: String = ""
 
+    /**
+     * 로그인
+     */
     fun setAppBarTitle(title: String) {
         appBarTitle.value = title
     }
@@ -48,11 +67,11 @@ class MainViewModel @Inject constructor(
                 setKakaoIdToken(idToken)
                 // true -> oauthToken 호출
                 // false -> 회원가입 페이지로 이동
-//                when(it.data.isRegistered){
-//                    true -> getOauthToken()
-//                    false -> _movePageEvent.emit("termsOfUse")
-//                }
-                _movePageEvent.emit("termsOfUse")
+                when(it.data.isRegistered){
+                    true -> getOauthToken()
+                    false -> _movePageEvent.emit("termsOfUse")
+                }
+//                _movePageEvent.emit("termsOfUse")
 
             }
         }
@@ -90,10 +109,32 @@ class MainViewModel @Inject constructor(
             }
         }
     }
+    suspend fun getAccessToken2(): String? {
+        return withContext(Dispatchers.IO) {
+            val token = getAccessTokenUseCase.invoke().first()
+            Log.d("EJ_LOG", "getAccessToken : $token")
+            token
+        }
+    }
     fun setKakaoIdToken(idToken: String){
         kakaoIdToken = idToken
     }
     fun getKakaoIdToken(): String{
         return kakaoIdToken
+    }
+
+    /**
+     * 커뮤니티
+     */
+    fun getPostList() {
+        val getPostsRequest = GetPostsRequest().apply {  }
+        viewModelScope.launch {
+            val token = getAccessToken2()?:""
+            val response = getPostsUseCase.execute(this@MainViewModel,"Bearer $token", getPostsRequest)
+            response?.posts?.let{
+                communityPostList.clear()
+                communityPostList.addAll(it)
+            }
+        }
     }
 }
