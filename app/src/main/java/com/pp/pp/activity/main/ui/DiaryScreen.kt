@@ -4,10 +4,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -29,6 +30,7 @@ import com.pp.pp.R
 import com.pp.pp.ui.getRobotoFontFamily
 import com.pp.pp.ui.theme.color_d9d9d9
 import com.pp.pp.ui.theme.color_ebebf4
+import com.pp.pp.ui.theme.color_main
 import com.pp.pp.ui.theme.color_white
 
 @Composable
@@ -37,11 +39,20 @@ fun DiaryScreen(
 ) {
     Box(
         modifier = Modifier
-            .background(color = color_ebebf4)
             .fillMaxWidth()
             .fillMaxHeight()
     ) {
-        DiaryListUI(communityPostList)
+        when (communityPostList.isNotEmpty()) {
+            true -> DiaryListUI(communityPostList)
+            false -> {
+                Image(
+                    modifier = Modifier.align(Alignment.Center),
+                    painter = painterResource(id = R.drawable.post_it_note_with_pin),
+                    contentDescription = null
+                )
+            }
+        }
+
         Image(
             painterResource(id = R.drawable.ic_diary_upload_btn), contentDescription = null,
             modifier = Modifier.align(Alignment.BottomEnd)
@@ -75,8 +86,8 @@ fun DiaryItemUI(post: PostModel) {
     ) {
         Box(
             modifier = Modifier
-                .height(118.dp)
                 .fillMaxWidth()
+                .aspectRatio(1f)
                 .background(
                     shape = RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp),
                     color = color_d9d9d9
@@ -91,7 +102,6 @@ fun DiaryItemUI(post: PostModel) {
                     .fillMaxSize()
                     .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
             ) {
-
                 it.error(R.drawable.img_empty)
                     .placeholder(R.drawable.img_empty)
                     .load(post.thumbnailUrl)
