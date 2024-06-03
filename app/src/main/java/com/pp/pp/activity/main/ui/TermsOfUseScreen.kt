@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.pp.pp.R
 import com.pp.pp.ui.CommonCompose.CommonButton
 import com.pp.pp.ui.CustomModifier.removeEffectClickable
-import com.pp.pp.ui.theme.color_000b70
+import com.pp.pp.ui.theme.color_main
 import com.pp.pp.ui.theme.color_bbbbbb
 
 @Composable
@@ -59,7 +59,7 @@ fun TermsOfUseScreen(
                 modifier = Modifier.padding(end = 10.dp),
                 imageVector = Icons.Filled.CheckCircle,
                 contentDescription = "Localized description",
-                tint = if (isSelectedAll.value) color_000b70 else color_bbbbbb
+                tint = if (isSelectedAll.value) color_main else color_bbbbbb
             )
             Text(text = stringResource(id = R.string.terms_of_use_agree_all))
         }
@@ -89,7 +89,7 @@ fun TermsOfUseItemUI(isSelected: Boolean, item: String, onclickEvent: () -> Unit
             modifier = Modifier.padding(end = 10.dp),
             imageVector = Icons.Filled.CheckCircle,
             contentDescription = "Localized description",
-            tint = if (isSelected) color_000b70 else color_bbbbbb
+            tint = if (isSelected) color_main else color_bbbbbb
         )
         Text(text = item)
         Spacer(modifier = Modifier.weight(1f))

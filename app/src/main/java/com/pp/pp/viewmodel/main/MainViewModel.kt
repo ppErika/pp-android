@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.pp.domain.model.post.GetPostsRequest
 import com.pp.domain.model.post.PostModel
 import com.pp.domain.model.token.OauthTokenRequest
+import com.pp.domain.model.token.OauthTokenResponse
 import com.pp.domain.usecase.datastore.GetAccessTokenUseCase
 import com.pp.domain.usecase.datastore.SetAccessTokenUseCase
 import com.pp.domain.usecase.posts.GetPostsUseCase
@@ -86,13 +87,13 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             val response = oauthTokenUseCase.execute(this@MainViewModel, oauthTokenRequest)
             response?.let {
-                setAccessToken(it.access_token)
+                setAccessToken(it)
             }
         }
     }
-    private fun setAccessToken(accessToken: String) {
+    private fun setAccessToken(oauthTokenResponse: OauthTokenResponse) {
         viewModelScope.launch {
-            setAccessTokenUseCase.invoke(accessToken)
+            setAccessTokenUseCase.invoke(oauthTokenResponse)
         }
         getAccessToken()
     }

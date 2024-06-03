@@ -40,7 +40,7 @@ import com.pp.pp.activity.main.ui.TermsOfUseScreen
 import com.pp.pp.activity.terms.TermsOfUseActivity
 import com.pp.pp.base.BaseActivity
 import com.pp.pp.ui.CommonCompose
-import com.pp.pp.ui.theme.color_000b70
+import com.pp.pp.ui.theme.color_main
 import com.pp.pp.ui.theme.color_white
 import com.pp.pp.viewmodel.main.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -133,13 +133,13 @@ class MainActivity : BaseActivity<MainViewModel>() {
                                 else -> painterResource(id = R.drawable.ic_navi_setting)
                             },
                             contentDescription = "${item.name} Icon",
-                            tint = if (selected) color_000b70 else Color.Gray,
+                            tint = if (selected) color_main else Color.Gray,
                             modifier = Modifier.size(24.dp)
                         )
                         Text(
                             text = item.name,
                             fontWeight = FontWeight.Bold,
-                            color = if (selected) color_000b70 else Color.Gray,
+                            color = if (selected) color_main else Color.Gray,
                             modifier = Modifier.padding(top = 4.dp)
                         )
                     }
