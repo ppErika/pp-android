@@ -54,8 +54,8 @@ class MainActivity : BaseActivity<MainViewModel>() {
     override fun observerViewModel() {
         mViewModel.run {
             movePageEvent.onEach {
-                when(it){
-                    "termsOfUse"->{
+                when (it) {
+                    "termsOfUse" -> {
                         val intent = Intent(this@MainActivity, TermsOfUseActivity::class.java)
                         intent.putExtra("idToken", getKakaoIdToken())
                         startActivity(intent)
@@ -74,9 +74,12 @@ class MainActivity : BaseActivity<MainViewModel>() {
         val isLogin = remember {
             mViewModel.isLogin
         }.value
-        val communityPostList = remember{
+        val communityPostList = remember {
             mViewModel.communityPostList
         }
+        val packageInfo =
+            applicationContext.packageManager.getPackageInfo(applicationContext.packageName, 0)
+
         LaunchedEffect(key1 = isLogin) {
             mViewModel.getPostList()
         }
@@ -99,7 +102,10 @@ class MainActivity : BaseActivity<MainViewModel>() {
                         true -> DiaryScreen(
                             communityPostList = communityPostList
                         )
-                        false -> LoginScreen() {
+
+                        false -> LoginScreen(
+
+                        ) {
                             kakaoLogin()
                         }
                     }
@@ -107,7 +113,12 @@ class MainActivity : BaseActivity<MainViewModel>() {
                 // 설정
                 composable(route = MainNav.Setting.name) {
                     mViewModel.setAppBarTitle(MainNav.Setting.name)
-                    SettingScreen()
+                    SettingScreen(
+                        isLogin = isLogin,
+                        version = packageInfo.versionName ?: "Unknown"
+                    ) {
+
+                    }
                 }
             }
             Row(
