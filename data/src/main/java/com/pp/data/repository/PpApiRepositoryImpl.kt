@@ -4,8 +4,11 @@ import androidx.annotation.WorkerThread
 import com.pp.data.dao.DiaryDao
 import com.pp.data.datasource.server.PpApiDataSource
 import com.pp.data.entity.Diary
+import com.pp.domain.model.post.GetPostsRequest
+import com.pp.domain.model.post.GetPostsResponse
 import com.pp.domain.model.token.OauthTokenRequest
 import com.pp.domain.model.token.OauthTokenResponse
+import com.pp.domain.model.users.UserRegisteredResponse
 import com.pp.domain.repository.PpApiRepository
 import com.pp.domain.utils.RemoteError
 import kotlinx.coroutines.flow.Flow
@@ -28,5 +31,21 @@ class PpApiRepositoryImpl @Inject constructor(
     @WorkerThread
     suspend fun insert(diary: Diary) {
         diaryDao.insert(diary)
+    }
+
+    override suspend fun userRegistered(
+        remoteError: RemoteError,
+        client: String,
+        idToken: String
+    ): UserRegisteredResponse? {
+        return ppApiDataSource.userRegistered(remoteError, client, idToken)
+    }
+
+    override suspend fun getPosts(
+        remoteError: RemoteError,
+        accessToken: String,
+        getPostsRequest: GetPostsRequest
+    ): GetPostsResponse? {
+        return ppApiDataSource.getPosts(remoteError, accessToken, getPostsRequest)
     }
 }

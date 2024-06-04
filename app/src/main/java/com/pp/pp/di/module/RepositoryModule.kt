@@ -14,7 +14,7 @@ import javax.inject.Singleton
 object RepositoryModule {
     @Provides
     @Singleton
-    fun providePosApiRepository(ppApiDataSourceImpl: PpApiDataSourceImpl): PpApiRepository {
+    fun providePpApiRepository(ppApiDataSourceImpl: PpApiDataSourceImpl): PpApiRepository {
         return PpApiRepositoryImpl(ppApiDataSourceImpl)
     }
 
