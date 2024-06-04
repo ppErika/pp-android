@@ -1,12 +1,9 @@
 package com.pp.data.remote.api
 
-import com.pp.domain.model.token.OauthTokenRequest
 import com.pp.domain.model.token.OauthTokenResponse
 import com.pp.domain.model.users.UserRegisteredResponse
 import retrofit2.Response
-import retrofit2.http.Body
 import retrofit2.http.Field
-import retrofit2.http.FieldMap
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -30,4 +27,5 @@ interface PpApi {
         @Path("client") client: String,
         @Field("idToken") idToken: String
     ) : Response<UserRegisteredResponse>
+
 }

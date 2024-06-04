@@ -41,11 +41,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.DiaryActivity"
-            android:theme="@style/Theme.PP"
-            android:exported="true">
-        </activity>
-        <activity
             android:name=".activity.terms.TermsOfUseActivity"
             android:theme="@style/Theme.PP"
             android:exported="true">

@@ -1,5 +1,7 @@
 package com.pp.data.datasource.server
 
+import com.pp.domain.model.post.GetPostsRequest
+import com.pp.domain.model.post.GetPostsResponse
 import com.pp.domain.model.token.OauthTokenRequest
 import com.pp.domain.model.token.OauthTokenResponse
 import com.pp.domain.model.users.UserRegisteredResponse
@@ -15,4 +17,9 @@ interface PpApiDataSource {
         client: String,
         idToken: String
     ): UserRegisteredResponse?
+    suspend fun getPosts(
+        remoteError: RemoteError,
+        accessToken: String,
+        getPostsRequest: GetPostsRequest
+    ): GetPostsResponse?
 }
