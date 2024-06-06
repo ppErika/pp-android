@@ -1,5 +1,6 @@
 package com.pp.data.remote.api
 
+import com.pp.domain.model.common.CommonResponse
 import com.pp.domain.model.token.OauthTokenResponse
 import com.pp.domain.model.users.UserRegisteredResponse
 import retrofit2.Response
@@ -10,7 +11,7 @@ import retrofit2.http.Path
 
 interface PpApi {
     @FormUrlEncoded
-    @POST("/oauth2/token")
+    @POST("oauth2/token")
     suspend fun oauthToken(
         @Field("grant_type") grant_type: String,
         @Field("client_id") client_id: String,
@@ -22,7 +23,7 @@ interface PpApi {
     ): Response<OauthTokenResponse>
 
     @FormUrlEncoded
-    @POST("/api/v1/oauth2/{client}/users/registered")
+    @POST("api/v1/oauth2/{client}/users/registered")
     suspend fun userRegistered(
         @Path("client") client: String,
         @Field("idToken") idToken: String
