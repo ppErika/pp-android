@@ -11,8 +11,7 @@ class GetPostsUseCase @Inject constructor(
 ) {
     suspend fun execute(
         remoteError: RemoteError,
-        accessToken: String,
         getPostsRequest: GetPostsRequest
     ): GetPostsResponse? =
-        ppApiRepository.getPosts(remoteError, accessToken, getPostsRequest)
+        ppApiRepository.getPosts(remoteError, getPostsRequest)
 }

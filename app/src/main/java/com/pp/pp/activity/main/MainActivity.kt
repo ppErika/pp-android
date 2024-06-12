@@ -81,7 +81,9 @@ class MainActivity : BaseActivity<MainViewModel>() {
             applicationContext.packageManager.getPackageInfo(applicationContext.packageName, 0)
 
         LaunchedEffect(key1 = isLogin) {
-            mViewModel.getPostList()
+            if(isLogin){
+                mViewModel.getPostList()
+            }
         }
         Column(Modifier.fillMaxSize()) {
             CommonCompose.CommonAppBarUI(title = appBarTitle, isBackPressed = false) {}
@@ -117,6 +119,9 @@ class MainActivity : BaseActivity<MainViewModel>() {
                         isLogin = isLogin,
                         version = packageInfo.versionName ?: "Unknown"
                     ) {
+                        when(it){
+                            "logout" -> mViewModel.logout()
+                        }
 
                     }
                 }

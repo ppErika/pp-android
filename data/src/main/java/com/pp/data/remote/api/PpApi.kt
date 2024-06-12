@@ -29,4 +29,12 @@ interface PpApi {
         @Field("idToken") idToken: String
     ) : Response<UserRegisteredResponse>
 
+    @FormUrlEncoded
+    @POST("oauth2/revoke")
+    suspend fun revokeToken(
+        @Field("client_id") client_id: String,
+        @Field("token") token: String,
+        @Field("token_type_hint") token_type_hint: String
+    ) : Response<String?>
+
 }

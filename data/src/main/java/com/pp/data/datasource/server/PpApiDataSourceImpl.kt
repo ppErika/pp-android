@@ -3,10 +3,12 @@ package com.pp.data.datasource.server
 import com.pp.data.base.BaseRepository
 import com.pp.data.remote.api.PpApi
 import com.pp.data.remote.api.PpAuthenticationApi
+import com.pp.domain.model.common.CommonResponse
 import com.pp.domain.model.post.GetPostsRequest
 import com.pp.domain.model.post.GetPostsResponse
 import com.pp.domain.model.token.OauthTokenRequest
 import com.pp.domain.model.token.OauthTokenResponse
+import com.pp.domain.model.token.RevokeTokenRequest
 import com.pp.domain.model.users.UserRegisteredResponse
 import com.pp.domain.utils.RemoteError
 import javax.inject.Inject
@@ -14,7 +16,6 @@ import javax.inject.Inject
 class PpApiDataSourceImpl @Inject constructor(
     private val ppAuthenticationApi: PpAuthenticationApi,
     private val ppApi: PpApi
-
 ) : BaseRepository(), PpApiDataSource {
     override suspend fun oauthToken(
         remoteError: RemoteError,
@@ -48,13 +49,25 @@ class PpApiDataSourceImpl @Inject constructor(
 
     override suspend fun getPosts(
         remoteError: RemoteError,
-        accessToken: String,
         getPostsRequest: GetPostsRequest
     ): GetPostsResponse? {
         return safeApiCallData(remoteError) {
             ppAuthenticationApi.getPosts(
                 lastId = getPostsRequest.lastId,
                 limit = getPostsRequest.limit
+            )
+        }
+    }
+
+    override suspend fun revokeToken(
+        remoteError: RemoteError,
+        revokeTokenRequest: RevokeTokenRequest
+    ): String? {
+        return safeApiCallNoContext(remoteError) {
+            ppApi.revokeToken(
+                client_id = revokeTokenRequest.client_id,
+                token = revokeTokenRequest.token,
+                token_type_hint = revokeTokenRequest.token_type_hint
             )
         }
     }

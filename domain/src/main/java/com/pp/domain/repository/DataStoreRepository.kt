@@ -7,4 +7,5 @@ interface DataStoreRepository {
     suspend fun setAccessToken(oauthTokenResponse: OauthTokenResponse)
     suspend fun getAccessToken(): Flow<String?>
     suspend fun getRefreshToken(): Flow<String?>
+    suspend fun doLogout()
 }

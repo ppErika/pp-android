@@ -8,10 +8,13 @@ import com.pp.domain.model.post.GetPostsRequest
 import com.pp.domain.model.post.PostModel
 import com.pp.domain.model.token.OauthTokenRequest
 import com.pp.domain.model.token.OauthTokenResponse
+import com.pp.domain.model.token.RevokeTokenRequest
+import com.pp.domain.usecase.datastore.DoLogoutUseCase
 import com.pp.domain.usecase.datastore.GetAccessTokenUseCase
 import com.pp.domain.usecase.datastore.SetAccessTokenUseCase
 import com.pp.domain.usecase.posts.GetPostsUseCase
 import com.pp.domain.usecase.token.OauthTokenUseCase
+import com.pp.domain.usecase.token.RevokeTokenUseCase
 import com.pp.domain.usecase.users.UserRegisteredUseCase
 import com.pp.pp.activity.main.route.MainNav
 import com.pp.pp.base.BaseViewModel
@@ -29,7 +32,9 @@ class MainViewModel @Inject constructor(
     private val oauthTokenUseCase: OauthTokenUseCase,
     private val setAccessTokenUseCase: SetAccessTokenUseCase,
     private val getAccessTokenUseCase: GetAccessTokenUseCase,
-    private val getPostsUseCase: GetPostsUseCase
+    private val getPostsUseCase: GetPostsUseCase,
+    private val revokeTokenUseCase: RevokeTokenUseCase,
+    private val doLogoutUseCase: DoLogoutUseCase
 ) : BaseViewModel() {
     // 공통
     var appBarTitle = mutableStateOf("")
@@ -130,12 +135,33 @@ class MainViewModel @Inject constructor(
     fun getPostList() {
         val getPostsRequest = GetPostsRequest().apply {  }
         viewModelScope.launch {
-            val token = getAccessToken2()?:""
-            val response = getPostsUseCase.execute(this@MainViewModel,"Bearer $token", getPostsRequest)
+            val response = getPostsUseCase.execute(this@MainViewModel, getPostsRequest)
             response?.posts?.let{
                 communityPostList.clear()
                 communityPostList.addAll(it)
             }
         }
+    }
+    /**
+     * 로그아웃
+     */
+    fun logout(){
+        viewModelScope.launch {
+            val revokeTokenRequest = RevokeTokenRequest().apply {
+                token = getAccessToken2()?:""
+            }
+            val response = revokeTokenUseCase.execute(this@MainViewModel,revokeTokenRequest)
+            Log.d("EJ_LOG","revokeToken : $response")
+            response?.let{
+                doLogoutUseCase.invoke()
+                isLogin.value = false
+            }
+        }
+    }
+    /**
+     * 탈퇴하기
+     */
+    fun withdraw(){
+
     }
 }
