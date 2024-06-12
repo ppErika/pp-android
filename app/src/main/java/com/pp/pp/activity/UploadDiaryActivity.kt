@@ -1,4 +1,4 @@
-package com.pp.pp
+package com.pp.pp.activity
 
 import android.net.Uri
 import android.os.Bundle
@@ -181,9 +181,8 @@ class UploadDiaryActivity : BaseActivity<UploadDiaryViewModel>() {
                         decorationBox = { innerTextField ->
                             Row(
                                 modifier = Modifier
-                                    .clip(RoundedCornerShape(size = 5.dp))
                                     .background(Color.White)
-                                    .border(1.dp, Color.Gray)
+                                    .border(1.dp, Color.Gray, RoundedCornerShape(5.dp))
                                     .padding(10.dp),
                                 horizontalArrangement = Arrangement.Start,
                                 verticalAlignment = Alignment.CenterVertically
@@ -219,8 +218,8 @@ class UploadDiaryActivity : BaseActivity<UploadDiaryViewModel>() {
                             Row(
                                 modifier = Modifier
                                     .clip(RoundedCornerShape(size = 5.dp))
-                                    .background(Color.White)
-                                    .border(1.dp, Color.Gray)
+                                    .background(color = color_white)
+                                    .border(1.dp, Color.Gray, RoundedCornerShape(5.dp))
                                     .padding(10.dp),
                                 horizontalArrangement = Arrangement.Start,
                                 verticalAlignment = Alignment.Top
