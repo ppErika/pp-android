@@ -7,4 +7,6 @@
     <string name="btn_delete">삭제</string>
     <string name="btn_back_arrow">뒤로가기</string>
     <string name="btn_upload_image">사진 불러오기</string>
+    <string name="hint_title">제목을 작성해주세요.</string>
+    <string name="hint_content">내용을 작성해주세요.</string>
 </resources>

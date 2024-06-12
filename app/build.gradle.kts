@@ -79,4 +79,8 @@ dependencies {
 
     // splash Api
     implementation("androidx.core:core-splashscreen:1.0.1")
+
+    // coil
+    implementation("io.coil-kt:coil:2.4.0")
+    implementation("io.coil-kt:coil-compose:2.4.0")
 }
