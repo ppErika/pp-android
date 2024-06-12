@@ -7,9 +7,9 @@ import org.w3c.dom.Text
 
 @Entity(tableName = "diary")
 data class Diary(
-    @PrimaryKey @ColumnInfo(name = "id") val id: Int,
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
     @ColumnInfo(name = "title") val title: String,
     @ColumnInfo(name = "contents") val contents: String,
     @ColumnInfo(name = "create_date") val createDate: String,
-    @ColumnInfo(name = "image_url") val imageUrl: Text?
+    @ColumnInfo(name = "image_data") val imageData: ByteArray?
 )
