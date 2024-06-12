@@ -64,6 +64,8 @@ import coil.compose.rememberImagePainter
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.pp.pp.R
 import com.pp.pp.base.BaseActivity
+import com.pp.pp.ui.theme.color_f3f3f3
+import com.pp.pp.ui.theme.color_main
 import com.pp.pp.ui.theme.color_white
 import com.pp.pp.viewmodel.UploadDiaryViewModel
 
@@ -137,7 +139,7 @@ class UploadDiaryActivity : BaseActivity<UploadDiaryViewModel>() {
                             modifier = Modifier
                                 .size(65.dp)
                                 .clip(RoundedCornerShape(5.dp))
-                                .background(colorResource(id = R.color.background_upload_image)),
+                                .background(color_f3f3f3),
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_camera),
@@ -241,7 +243,7 @@ class UploadDiaryActivity : BaseActivity<UploadDiaryViewModel>() {
                     Button(
                         onClick = { /*TODO*/ },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = colorResource(id = R.color.main_color),
+                            containerColor = color_main,
                             contentColor = Color.White,
                             disabledContainerColor = Color.Gray,
                             disabledContentColor = Color.White

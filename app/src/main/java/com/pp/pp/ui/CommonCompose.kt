@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.pp.pp.R
 import com.pp.pp.ui.theme.color_black
+import com.pp.pp.ui.theme.color_main
 
 object CommonCompose {
     @Composable
@@ -86,7 +87,7 @@ object CommonCompose {
         Button(
             onClick = { onClick() },
             colors = ButtonDefaults.buttonColors(
-                containerColor = colorResource(id = R.color.main_color),
+                containerColor = color_main,
                 contentColor = Color.White,
                 disabledContainerColor = Color.Gray,
                 disabledContentColor = Color.White
