@@ -104,4 +104,8 @@ dependencies {
 
     // compose glide
     implementation(libs.bumptech.glide.compose)
+
+    // coil
+    implementation(libs.io.coil.kt.coil)
+    implementation(libs.io.coil.kt.compose)
 }

@@ -62,7 +62,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.pp.pp.R
 import com.pp.pp.base.BaseActivity
+import com.pp.pp.ui.theme.color_white
+import com.pp.pp.viewmodel.UploadDiaryViewModel
 
 class UploadDiaryActivity : BaseActivity<UploadDiaryViewModel>() {
     override val viewModel: UploadDiaryViewModel by viewModels()
