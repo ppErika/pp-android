@@ -1,10 +1,12 @@
 package com.pp.data.repository
 
 import com.pp.data.datasource.server.PpApiDataSource
+import com.pp.domain.model.common.CommonResponse
 import com.pp.domain.model.post.GetPostsRequest
 import com.pp.domain.model.post.GetPostsResponse
 import com.pp.domain.model.token.OauthTokenRequest
 import com.pp.domain.model.token.OauthTokenResponse
+import com.pp.domain.model.token.RevokeTokenRequest
 import com.pp.domain.model.users.UserRegisteredResponse
 import com.pp.domain.repository.PpApiRepository
 import com.pp.domain.utils.RemoteError
@@ -30,9 +32,19 @@ class PpApiRepositoryImpl @Inject constructor(
 
     override suspend fun getPosts(
         remoteError: RemoteError,
-        accessToken: String,
         getPostsRequest: GetPostsRequest
     ): GetPostsResponse? {
-        return ppApiDataSource.getPosts(remoteError, accessToken, getPostsRequest)
+        return ppApiDataSource.getPosts(remoteError, getPostsRequest)
+    }
+
+    override suspend fun revokeToken(
+        remoteError: RemoteError,
+        revokeTokenRequest: RevokeTokenRequest
+    ): String? {
+        return ppApiDataSource.revokeToken(remoteError, revokeTokenRequest)
+    }
+
+    override suspend fun deleteUser(remoteError: RemoteError, userId: String): CommonResponse? {
+        return ppApiDataSource.deleteUser(remoteError, userId)
     }
 }

@@ -8,6 +8,7 @@ import com.pp.data.remote.api.PpAuthenticationApi
 import com.pp.data.remote.api.PpRefreshApi
 import com.pp.pp.widget.AccessTokenInterceptor
 import com.pp.pp.widget.AuthAuthenticator
+import com.pp.pp.widget.NullOnEmptyConverterFactory
 import com.pp.pp.widget.RefreshTokenInterceptor
 import dagger.Module
 import dagger.Provides
@@ -88,12 +89,8 @@ object NetworkModule {
         @AuthenticatedClient okHttpClient: OkHttpClient,
         gsonConverterFactory: GsonConverterFactory
     ): Retrofit {
-        return Retrofit.Builder()
-            .client(okHttpClient)
-            .baseUrl(com.pp.pp.widget.NetworkUtils.BASE_URL)
-            .addConverterFactory(gsonConverterFactory)
-            .addCallAdapterFactory(CoroutineCallAdapterFactory())
-            .build()
+        return createRetrofit(okHttpClient, gsonConverterFactory)
+
     }
     @Provides
     @Singleton
@@ -102,12 +99,8 @@ object NetworkModule {
         @PublicClient okHttpClient: OkHttpClient,
         gsonConverterFactory: GsonConverterFactory
     ): Retrofit {
-        return Retrofit.Builder()
-            .client(okHttpClient)
-            .baseUrl(com.pp.pp.widget.NetworkUtils.BASE_URL)
-            .addConverterFactory(gsonConverterFactory)
-            .addCallAdapterFactory(CoroutineCallAdapterFactory())
-            .build()
+        return createRetrofit(okHttpClient, gsonConverterFactory)
+
     }
     @Provides
     @Singleton
@@ -116,9 +109,14 @@ object NetworkModule {
         @TokenRefreshClient okHttpClient: OkHttpClient,
         gsonConverterFactory: GsonConverterFactory
     ): Retrofit {
+        return createRetrofit(okHttpClient, gsonConverterFactory)
+    }
+
+    private fun createRetrofit(okHttpClient: OkHttpClient, gsonConverterFactory: GsonConverterFactory): Retrofit {
         return Retrofit.Builder()
             .client(okHttpClient)
             .baseUrl(com.pp.pp.widget.NetworkUtils.BASE_URL)
+            .addConverterFactory(NullOnEmptyConverterFactory())
             .addConverterFactory(gsonConverterFactory)
             .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .build()

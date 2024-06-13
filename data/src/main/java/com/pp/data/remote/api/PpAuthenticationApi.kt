@@ -15,7 +15,7 @@ import retrofit2.http.Query
 
 interface PpAuthenticationApi {
 
-    @GET("/api/v1/posts")
+    @GET("api/v1/posts")
     suspend fun getPosts(
         @Query("limit") limit: Int,
         @Query("lastId") lastId: Int?

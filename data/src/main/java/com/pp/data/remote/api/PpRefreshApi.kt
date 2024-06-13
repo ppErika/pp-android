@@ -8,7 +8,7 @@ import retrofit2.http.POST
 
 interface PpRefreshApi {
     @FormUrlEncoded
-    @POST("/oauth2/token")
+    @POST("oauth2/token")
     suspend fun refreshToken(
         @Field("client_id") client_id: String = "kauth.kakao.com",
         @Field("grant_type") grant_type: String = "refresh_token",

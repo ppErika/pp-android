@@ -1,8 +1,10 @@
 package com.pp.data.remote.api
 
+import com.pp.domain.model.common.CommonResponse
 import com.pp.domain.model.token.OauthTokenResponse
 import com.pp.domain.model.users.UserRegisteredResponse
 import retrofit2.Response
+import retrofit2.http.DELETE
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
@@ -10,7 +12,7 @@ import retrofit2.http.Path
 
 interface PpApi {
     @FormUrlEncoded
-    @POST("/oauth2/token")
+    @POST("oauth2/token")
     suspend fun oauthToken(
         @Field("grant_type") grant_type: String,
         @Field("client_id") client_id: String,
@@ -22,10 +24,23 @@ interface PpApi {
     ): Response<OauthTokenResponse>
 
     @FormUrlEncoded
-    @POST("/api/v1/oauth2/{client}/users/registered")
+    @POST("api/v1/oauth2/{client}/users/registered")
     suspend fun userRegistered(
         @Path("client") client: String,
         @Field("idToken") idToken: String
     ) : Response<UserRegisteredResponse>
+
+    @FormUrlEncoded
+    @POST("oauth2/revoke")
+    suspend fun revokeToken(
+        @Field("client_id") client_id: String,
+        @Field("token") token: String,
+        @Field("token_type_hint") token_type_hint: String
+    ) : Response<String?>
+
+    @DELETE("/api/v1/users/{userId}")
+    suspend fun deleteUser(
+        @Path("userId") client: String
+    ) : Response<CommonResponse>
 
 }
