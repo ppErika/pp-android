@@ -43,4 +43,8 @@ class PpApiRepositoryImpl @Inject constructor(
     ): String? {
         return ppApiDataSource.revokeToken(remoteError, revokeTokenRequest)
     }
+
+    override suspend fun deleteUser(remoteError: RemoteError, userId: String): CommonResponse? {
+        return ppApiDataSource.deleteUser(remoteError, userId)
+    }
 }

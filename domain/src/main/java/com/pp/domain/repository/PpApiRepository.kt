@@ -27,4 +27,8 @@ interface PpApiRepository {
         remoteError: RemoteError,
         revokeTokenRequest: RevokeTokenRequest
     ): String?
+    suspend fun deleteUser(
+        remoteError: RemoteError,
+        userId: String
+    ): CommonResponse?
 }

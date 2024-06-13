@@ -72,4 +72,10 @@ class PpApiDataSourceImpl @Inject constructor(
         }
     }
 
+    override suspend fun deleteUser(remoteError: RemoteError, userId: String): CommonResponse? {
+        return safeApiCall(remoteError) {
+            ppApi.deleteUser(userId)
+        }
+    }
+
 }

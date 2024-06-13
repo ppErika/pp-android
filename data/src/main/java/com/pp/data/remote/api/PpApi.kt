@@ -4,6 +4,7 @@ import com.pp.domain.model.common.CommonResponse
 import com.pp.domain.model.token.OauthTokenResponse
 import com.pp.domain.model.users.UserRegisteredResponse
 import retrofit2.Response
+import retrofit2.http.DELETE
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
@@ -36,5 +37,10 @@ interface PpApi {
         @Field("token") token: String,
         @Field("token_type_hint") token_type_hint: String
     ) : Response<String?>
+
+    @DELETE("/api/v1/users/{userId}")
+    suspend fun deleteUser(
+        @Path("userId") client: String
+    ) : Response<CommonResponse>
 
 }

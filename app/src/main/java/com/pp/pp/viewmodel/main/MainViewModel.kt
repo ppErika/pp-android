@@ -15,6 +15,7 @@ import com.pp.domain.usecase.datastore.SetAccessTokenUseCase
 import com.pp.domain.usecase.posts.GetPostsUseCase
 import com.pp.domain.usecase.token.OauthTokenUseCase
 import com.pp.domain.usecase.token.RevokeTokenUseCase
+import com.pp.domain.usecase.users.DeleteUserUseCase
 import com.pp.domain.usecase.users.UserRegisteredUseCase
 import com.pp.pp.activity.main.route.MainNav
 import com.pp.pp.base.BaseViewModel
@@ -34,7 +35,8 @@ class MainViewModel @Inject constructor(
     private val getAccessTokenUseCase: GetAccessTokenUseCase,
     private val getPostsUseCase: GetPostsUseCase,
     private val revokeTokenUseCase: RevokeTokenUseCase,
-    private val doLogoutUseCase: DoLogoutUseCase
+    private val doLogoutUseCase: DoLogoutUseCase,
+    private val deleteUserUseCase: DeleteUserUseCase
 ) : BaseViewModel() {
     // 공통
     var appBarTitle = mutableStateOf("")
@@ -57,6 +59,10 @@ class MainViewModel @Inject constructor(
         private set
 
     private var kakaoIdToken: String = ""
+
+    // 탈퇴
+    private val _deleteResult = SingleFlowEvent<Boolean>()
+    val deleteResult = _deleteResult.flow
 
     /**
      * 로그인
@@ -161,7 +167,17 @@ class MainViewModel @Inject constructor(
     /**
      * 탈퇴하기
      */
-    fun withdraw(){
+    fun deleteUser(userId: String){
+        viewModelScope.launch {
+            val response = deleteUserUseCase.execute(this@MainViewModel,userId)
+            response?.let{
+                // TODO TEST
+                _deleteResult.emit(true)
+                doLogoutUseCase.invoke()
+                isLogin.value = false
+
+            }
+        }
 
     }
 }
