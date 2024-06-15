@@ -2,6 +2,7 @@ package com.pp.pp.activity
 
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.WindowManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -62,16 +63,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.ViewModelProvider
 import com.pp.pp.R
 import com.pp.pp.base.BaseActivity
 import com.pp.pp.ui.theme.color_white
 import com.pp.pp.viewmodel.UploadDiaryViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class UploadDiaryActivity : BaseActivity<UploadDiaryViewModel>() {
     override val viewModel: UploadDiaryViewModel by viewModels()
 
     override fun observerViewModel() {
-        TODO("Not yet implemented")
+
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
@@ -239,7 +243,7 @@ class UploadDiaryActivity : BaseActivity<UploadDiaryViewModel>() {
                     )
 
                     Button(
-                        onClick = { /*TODO*/ },
+                        onClick = { viewModel.writingLog() },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = colorResource(id = R.color.main_color),
                             contentColor = Color.White,
@@ -269,7 +273,7 @@ class UploadDiaryActivity : BaseActivity<UploadDiaryViewModel>() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        installSplashScreen()
         super.onCreate(savedInstanceState)
+        installSplashScreen()
     }
 }
