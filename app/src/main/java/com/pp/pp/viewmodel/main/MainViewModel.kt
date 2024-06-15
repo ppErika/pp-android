@@ -17,8 +17,8 @@ import com.pp.domain.usecase.token.OauthTokenUseCase
 import com.pp.domain.usecase.token.RevokeTokenUseCase
 import com.pp.domain.usecase.users.DeleteUserUseCase
 import com.pp.domain.usecase.users.UserRegisteredUseCase
-import com.pp.pp.activity.main.route.MainNav
 import com.pp.pp.base.BaseViewModel
+import com.pp.pp.utils.DecodeJwtUtil
 import com.pp.pp.widget.SingleFlowEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -36,7 +36,8 @@ class MainViewModel @Inject constructor(
     private val getPostsUseCase: GetPostsUseCase,
     private val revokeTokenUseCase: RevokeTokenUseCase,
     private val doLogoutUseCase: DoLogoutUseCase,
-    private val deleteUserUseCase: DeleteUserUseCase
+    private val deleteUserUseCase: DeleteUserUseCase,
+    private val decodeJwtUtil: DecodeJwtUtil
 ) : BaseViewModel() {
     // 공통
     var appBarTitle = mutableStateOf("")
@@ -167,15 +168,15 @@ class MainViewModel @Inject constructor(
     /**
      * 탈퇴하기
      */
-    fun deleteUser(userId: String){
+    fun deleteUser(){
         viewModelScope.launch {
+            val userId = decodeJwtUtil.getUserId(token = getAccessToken2()?:"")
             val response = deleteUserUseCase.execute(this@MainViewModel,userId)
             response?.let{
                 // TODO TEST
                 _deleteResult.emit(true)
                 doLogoutUseCase.invoke()
                 isLogin.value = false
-
             }
         }
 
