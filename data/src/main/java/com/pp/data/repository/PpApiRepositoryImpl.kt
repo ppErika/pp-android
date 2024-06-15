@@ -1,6 +1,8 @@
 package com.pp.data.repository
 
 import com.pp.data.datasource.server.PpApiDataSource
+import com.pp.domain.model.comments.GetCommentsRequest
+import com.pp.domain.model.comments.GetCommentsResponse
 import com.pp.domain.model.common.CommonResponse
 import com.pp.domain.model.post.GetPostsRequest
 import com.pp.domain.model.post.GetPostsResponse
@@ -46,5 +48,12 @@ class PpApiRepositoryImpl @Inject constructor(
 
     override suspend fun deleteUser(remoteError: RemoteError, userId: String): CommonResponse? {
         return ppApiDataSource.deleteUser(remoteError, userId)
+    }
+
+    override suspend fun getComments(
+        remoteError: RemoteError,
+        getCommentsRequest: GetCommentsRequest
+    ): GetCommentsResponse? {
+        return ppApiDataSource.getComments(remoteError, getCommentsRequest)
     }
 }

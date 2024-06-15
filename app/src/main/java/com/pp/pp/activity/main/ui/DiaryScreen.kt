@@ -18,7 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -27,15 +26,15 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.pp.domain.model.post.PostModel
 import com.pp.pp.R
+import com.pp.pp.ui.CustomModifier.removeEffectClickable
 import com.pp.pp.ui.getRobotoFontFamily
 import com.pp.pp.ui.theme.color_d9d9d9
-import com.pp.pp.ui.theme.color_ebebf4
-import com.pp.pp.ui.theme.color_main
 import com.pp.pp.ui.theme.color_white
 
 @Composable
 fun DiaryScreen(
-    communityPostList: List<PostModel>
+    communityPostList: List<PostModel>,
+    onClickEvent: (PostModel) -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -43,7 +42,7 @@ fun DiaryScreen(
             .fillMaxHeight()
     ) {
         when (communityPostList.isNotEmpty()) {
-            true -> DiaryListUI(communityPostList)
+            true -> DiaryListUI(communityPostList,onClickEvent)
             false -> {
                 Image(
                     modifier = Modifier.align(Alignment.Center),
@@ -62,7 +61,8 @@ fun DiaryScreen(
 
 @Composable
 fun DiaryListUI(
-    communityPostList: List<PostModel>
+    communityPostList: List<PostModel>,
+    onClickEvent: (PostModel) -> Unit
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2)
@@ -70,19 +70,25 @@ fun DiaryListUI(
         items(
             communityPostList
         ) {
-            DiaryItemUI(it)
+            DiaryItemUI(it,onClickEvent)
         }
     }
 }
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun DiaryItemUI(post: PostModel) {
+fun DiaryItemUI(
+    post: PostModel,
+    onClickEvent: (PostModel) -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(10.dp)
             .background(shape = RoundedCornerShape(10.dp), color = color_white)
+            .removeEffectClickable {
+                onClickEvent(post)
+            }
     ) {
         Box(
             modifier = Modifier

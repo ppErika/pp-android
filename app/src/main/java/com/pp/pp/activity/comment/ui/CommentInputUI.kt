@@ -1,4 +1,4 @@
-package com.pp.pp.viewmodel.comment.ui
+package com.pp.pp.activity.comment.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
