@@ -15,4 +15,6 @@
     <string name="setting_version_info">버전 정보</string>
     <string name="setting_logout">로그아웃</string>
     <string name="setting_delete_account">탈퇴하기</string>
+    <string name="hint_title">제목을 작성해주세요.</string>
+    <string name="hint_content">내용을 작성해주세요.</string>
 </resources>

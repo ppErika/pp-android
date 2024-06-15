@@ -27,6 +27,7 @@ dataStorePreferences = "1.1.1"
 hiltNavigationCompose = "1.2.0"
 composeGlide = "1.0.0-beta01"
 roomCommon = "2.6.1"
+coil = "2.4.0"
 
 [libraries]
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -66,6 +67,8 @@ room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomCommon" }
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomCommon" }
 androidx-room-common = { group = "androidx.room", name = "room-common", version.ref = "roomCommon" }
+io-coil-kt-coil = { group = "io.coil-kt", name="coil", version.ref = "coil" }
+io-coil-kt-compose = { group = "io.coil-kt", name="coil-compose", version.ref = "coil" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidApplication" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlinAndroid" }

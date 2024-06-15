@@ -57,7 +57,7 @@ fun SettingScreen(
         items(userSettingList) {
             UserSettingItemUI(title = it) {
                 when (it) {
-                    "로그아웃" -> {}
+                    "로그아웃" -> { onClick("logout") }
                     "탈퇴하기" -> {}
                 }
             }

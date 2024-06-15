@@ -1,17 +1,25 @@
 package com.pp.pp.activity
 
+import android.net.Uri
 import android.os.Bundle
+import android.view.WindowManager
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
@@ -19,12 +27,15 @@ import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ButtonDefaults.shape
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
@@ -36,7 +47,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.TestModifierUpdaterLayout
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -45,11 +60,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberImagePainter
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.pp.pp.R
-import com.pp.pp.viewmodel.UploadDiaryViewModel
 import com.pp.pp.base.BaseActivity
 import com.pp.pp.ui.theme.color_white
+import com.pp.pp.viewmodel.UploadDiaryViewModel
 
 class UploadDiaryActivity : BaseActivity<UploadDiaryViewModel>() {
     override val viewModel: UploadDiaryViewModel by viewModels()
@@ -62,7 +78,18 @@ class UploadDiaryActivity : BaseActivity<UploadDiaryViewModel>() {
     @Composable
     override fun ComposeUi() {
         val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-        var text by remember { mutableStateOf("Hello") }
+
+        var title by remember { mutableStateOf("") }
+        var content by remember { mutableStateOf("") }
+
+        var selectedImageUris by remember { mutableStateOf<List<Uri>>(emptyList()) }
+
+        val galleryLauncher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.GetMultipleContents()
+        ) { uris: List<Uri> ->
+            // Handle the result
+            selectedImageUris = uris.take(3) // Limit to 3 images
+        }
 
         Scaffold(
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -102,17 +129,40 @@ class UploadDiaryActivity : BaseActivity<UploadDiaryViewModel>() {
                         .fillMaxSize()
                         .padding(start = 16.dp, top = 66.dp, end = 16.dp, bottom = 16.dp),
                 ) {
-                    IconButton(
-                        onClick = { /*TODO*/ },
-                        modifier = Modifier
-                            .size(65.dp)
-                            .clip(RoundedCornerShape(5.dp))
-                            .background(colorResource(id = R.color.background_upload_image)),
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_camera),
-                            contentDescription = stringResource(id = R.string.btn_upload_image),
-                        )
+                        IconButton(
+                            onClick = { galleryLauncher.launch("image/*") },
+                            modifier = Modifier
+                                .size(65.dp)
+                                .clip(RoundedCornerShape(5.dp))
+                                .background(colorResource(id = R.color.background_upload_image)),
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_camera),
+                                contentDescription = stringResource(id = R.string.btn_upload_image),
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            selectedImageUris.forEach { uri ->
+                                Image(
+                                    painter = rememberImagePainter(uri),
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .size(65.dp)
+                                        .clip(RoundedCornerShape(5.dp))
+                                        .background(Color.Gray)
+                                        .border(1.dp, Color.Gray),
+                                    contentScale = ContentScale.Crop
+                                )
+                            }
+                        }
                     }
 
                     Text(
@@ -123,7 +173,7 @@ class UploadDiaryActivity : BaseActivity<UploadDiaryViewModel>() {
                     )
 
                     BasicTextField(
-                        value = text, onValueChange = { text = it },
+                        value = title, onValueChange = { title = it },
                         modifier = Modifier
                             .padding(top = 8.dp)
                             .height(40.dp)
@@ -140,6 +190,12 @@ class UploadDiaryActivity : BaseActivity<UploadDiaryViewModel>() {
                                 horizontalArrangement = Arrangement.Start,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
+                                if (title.isEmpty()) {
+                                    Text(
+                                        text = stringResource(id = R.string.hint_title),
+                                        color = Color.Gray
+                                    )
+                                }
                                 innerTextField()
                             }
                         }
@@ -153,10 +209,10 @@ class UploadDiaryActivity : BaseActivity<UploadDiaryViewModel>() {
                     )
 
                     BasicTextField(
-                        value = text, onValueChange = { text = it },
+                        value = content, onValueChange = { content = it },
                         modifier = Modifier
                             .padding(top = 8.dp)
-                            .height(416.dp)
+                            .height(350.dp)
                             .fillMaxWidth()
                             .background(color = Color.White),
                         singleLine = true,
@@ -171,6 +227,12 @@ class UploadDiaryActivity : BaseActivity<UploadDiaryViewModel>() {
                                 horizontalArrangement = Arrangement.Start,
                                 verticalAlignment = Alignment.Top
                             ) {
+                                if (content.isEmpty()) {
+                                    Text(
+                                        text = stringResource(id = R.string.hint_content),
+                                        color = Color.Gray
+                                    )
+                                }
                                 innerTextField()
                             }
                         }
