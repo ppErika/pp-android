@@ -24,7 +24,6 @@ class PpApiRepositoryImpl @Inject constructor(
     ): OauthTokenResponse? {
         return ppApiDataSource.oauthToken(remoteError, oauthTokenRequest)
     }
-
     override suspend fun userRegistered(
         remoteError: RemoteError,
         client: String,

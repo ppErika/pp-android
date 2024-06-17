@@ -26,6 +26,7 @@ kakao = "2.20.1"
 dataStorePreferences = "1.1.1"
 hiltNavigationCompose = "1.2.0"
 composeGlide = "1.0.0-beta01"
+roomCommon = "2.6.1"
 coil = "2.4.0"
 
 [libraries]
@@ -62,6 +63,10 @@ kakao-sdk-v2-user = { group = "com.kakao.sdk", name = "v2-user", version.ref = "
 androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "dataStorePreferences"}
 hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose"}
 bumptech-glide-compose = { group = "com.github.bumptech.glide", name = "compose", version.ref = "composeGlide"}
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "roomCommon" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomCommon" }
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomCommon" }
+androidx-room-common = { group = "androidx.room", name = "room-common", version.ref = "roomCommon" }
 io-coil-kt-coil = { group = "io.coil-kt", name="coil", version.ref = "coil" }
 io-coil-kt-compose = { group = "io.coil-kt", name="coil-compose", version.ref = "coil" }
 [plugins]

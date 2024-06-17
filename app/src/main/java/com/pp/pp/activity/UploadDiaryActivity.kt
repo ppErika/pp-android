@@ -1,8 +1,7 @@
 package com.pp.pp.activity
 
 import android.net.Uri
-import android.os.Bundle
-import android.view.WindowManager
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -11,7 +10,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,15 +25,12 @@ import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ButtonDefaults.shape
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
@@ -47,10 +42,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.TestModifierUpdaterLayout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -61,17 +54,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.pp.pp.R
 import com.pp.pp.base.BaseActivity
 import com.pp.pp.ui.theme.color_white
 import com.pp.pp.viewmodel.UploadDiaryViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class UploadDiaryActivity : BaseActivity<UploadDiaryViewModel>() {
     override val viewModel: UploadDiaryViewModel by viewModels()
 
     override fun observerViewModel() {
-        TODO("Not yet implemented")
+
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
@@ -81,7 +75,6 @@ class UploadDiaryActivity : BaseActivity<UploadDiaryViewModel>() {
 
         var title by remember { mutableStateOf("") }
         var content by remember { mutableStateOf("") }
-
         var selectedImageUris by remember { mutableStateOf<List<Uri>>(emptyList()) }
 
         val galleryLauncher = rememberLauncherForActivityResult(
@@ -173,7 +166,8 @@ class UploadDiaryActivity : BaseActivity<UploadDiaryViewModel>() {
                     )
 
                     BasicTextField(
-                        value = title, onValueChange = { title = it },
+                        value = title,
+                        onValueChange = { title = it },
                         modifier = Modifier
                             .padding(top = 8.dp)
                             .height(40.dp)
@@ -209,10 +203,11 @@ class UploadDiaryActivity : BaseActivity<UploadDiaryViewModel>() {
                     )
 
                     BasicTextField(
-                        value = content, onValueChange = { content = it },
+                        value = content,
+                        onValueChange = { content = it },
                         modifier = Modifier
                             .padding(top = 8.dp)
-                            .height(350.dp)
+                            .weight(1f)
                             .fillMaxWidth()
                             .background(color = Color.White),
                         singleLine = true,
@@ -239,7 +234,15 @@ class UploadDiaryActivity : BaseActivity<UploadDiaryViewModel>() {
                     )
 
                     Button(
-                        onClick = { /*TODO*/ },
+                        onClick = {
+                            if (title.isBlank() || content.isBlank()) {
+                                showShortToast("제목과 내용을 입력해주세요.")
+                            } else {
+                                viewModel.saveDiaryEntry(title, content, selectedImageUris)
+                                showShortToast("업로드에 성공했습니다.")
+                                finish()
+                            }
+                        },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = colorResource(id = R.color.main_color),
                             contentColor = Color.White,
@@ -266,10 +269,5 @@ class UploadDiaryActivity : BaseActivity<UploadDiaryViewModel>() {
 
     override fun init() {
 
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        installSplashScreen()
-        super.onCreate(savedInstanceState)
     }
 }
