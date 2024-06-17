@@ -38,7 +38,8 @@ import com.pp.pp.ui.theme.color_white
 @Composable
 fun DiaryScreen(
     communityPostList: List<PostModel>,
-    onClickEvent: (PostModel) -> Unit,
+    onClickItemEvent: (PostModel) -> Unit,
+    onClickUploadEvent: () -> Unit,
     loadEvent: () -> Unit
 ) {
     Box(
@@ -47,7 +48,7 @@ fun DiaryScreen(
             .fillMaxHeight()
     ) {
         when (communityPostList.isNotEmpty()) {
-            true -> DiaryListUI(communityPostList,onClickEvent,loadEvent)
+            true -> DiaryListUI(communityPostList, onClickItemEvent, loadEvent)
             false -> {
                 Image(
                     modifier = Modifier.align(Alignment.Center),
@@ -59,7 +60,9 @@ fun DiaryScreen(
 
         Image(
             painterResource(id = R.drawable.ic_diary_upload_btn), contentDescription = null,
-            modifier = Modifier.align(Alignment.BottomEnd)
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .removeEffectClickable { onClickUploadEvent() }
         )
     }
 }
@@ -78,7 +81,7 @@ fun DiaryListUI(
         items(
             communityPostList
         ) {
-            DiaryItemUI(it,onClickEvent)
+            DiaryItemUI(it, onClickEvent)
         }
     }
     //무한 스크롤

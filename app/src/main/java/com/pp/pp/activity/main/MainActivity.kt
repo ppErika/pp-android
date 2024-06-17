@@ -32,6 +32,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.kakao.sdk.user.UserApiClient
 import com.pp.pp.R
+import com.pp.pp.activity.UploadDiaryActivity
 import com.pp.pp.activity.comment.CommentActivity
 import com.pp.pp.activity.main.route.MainNav
 import com.pp.pp.activity.main.ui.DiaryScreen
@@ -97,7 +98,15 @@ class MainActivity : BaseActivity<MainViewModel>() {
                     mViewModel.setAppBarTitle(MainNav.MyDiary.name)
                     DiaryScreen(
                         communityPostList = emptyList(),
-                        onClickEvent = {},
+                        onClickItemEvent = {},
+                        onClickUploadEvent = {
+                            startActivity(
+                                Intent(
+                                    this@MainActivity,
+                                    UploadDiaryActivity::class.java
+                                )
+                            )
+                        },
                         loadEvent = {}
                     )
                 }
@@ -107,9 +116,10 @@ class MainActivity : BaseActivity<MainViewModel>() {
                     when (isLogin) {
                         true -> DiaryScreen(
                             communityPostList = communityPostList,
-                            onClickEvent = {
-                                moveCommentActivity(it.id)
+                            onClickItemEvent = {
+                                moveCommentActivity(it.id) // 임시로 댓글창 이동
                             },
+                            onClickUploadEvent = {},
                             loadEvent = { mViewModel.getPostList(false) }
                         )
 
