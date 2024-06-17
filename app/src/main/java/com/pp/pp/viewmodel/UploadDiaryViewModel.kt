@@ -33,8 +33,4 @@ class UploadDiaryViewModel @Inject constructor(
             roomRepository.insert(entry)
         }
     }
-
-    fun writingLog() {
-        Log.d("test", "test")
-    }
 }

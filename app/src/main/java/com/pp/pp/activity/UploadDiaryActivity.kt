@@ -1,6 +1,7 @@
 package com.pp.pp.activity
 
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -43,6 +44,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -73,7 +75,6 @@ class UploadDiaryActivity : BaseActivity<UploadDiaryViewModel>() {
 
         var title by remember { mutableStateOf("") }
         var content by remember { mutableStateOf("") }
-
         var selectedImageUris by remember { mutableStateOf<List<Uri>>(emptyList()) }
 
         val galleryLauncher = rememberLauncherForActivityResult(
@@ -165,7 +166,8 @@ class UploadDiaryActivity : BaseActivity<UploadDiaryViewModel>() {
                     )
 
                     BasicTextField(
-                        value = title, onValueChange = { title = it },
+                        value = title,
+                        onValueChange = { title = it },
                         modifier = Modifier
                             .padding(top = 8.dp)
                             .height(40.dp)
@@ -201,10 +203,11 @@ class UploadDiaryActivity : BaseActivity<UploadDiaryViewModel>() {
                     )
 
                     BasicTextField(
-                        value = content, onValueChange = { content = it },
+                        value = content,
+                        onValueChange = { content = it },
                         modifier = Modifier
                             .padding(top = 8.dp)
-                            .height(100.dp)
+                            .weight(1f)
                             .fillMaxWidth()
                             .background(color = Color.White),
                         singleLine = true,
@@ -231,7 +234,15 @@ class UploadDiaryActivity : BaseActivity<UploadDiaryViewModel>() {
                     )
 
                     Button(
-                        onClick = { viewModel.saveDiaryEntry(title, content, selectedImageUris) },
+                        onClick = {
+                            if (title.isBlank() || content.isBlank()) {
+                                showShortToast("제목과 내용을 입력해주세요.")
+                            } else {
+                                viewModel.saveDiaryEntry(title, content, selectedImageUris)
+                                showShortToast("업로드에 성공했습니다.")
+                                finish()
+                            }
+                        },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = colorResource(id = R.color.main_color),
                             contentColor = Color.White,
@@ -259,5 +270,4 @@ class UploadDiaryActivity : BaseActivity<UploadDiaryViewModel>() {
     override fun init() {
 
     }
-
 }
