@@ -24,40 +24,47 @@ class CommentActivity : BaseActivity<CommentViewModel>() {
     override val viewModel: CommentViewModel by viewModels()
 
     override fun observerViewModel() {
-        mViewModel.run{
+        mViewModel.run {
             reportCommentSuccessEvent.onEach {
-                Toast.makeText(this@CommentActivity, getString(R.string.toast_report_success), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this@CommentActivity,
+                    getString(R.string.toast_report_success),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
 
     @Composable
     override fun ComposeUi() {
-        val commentList = remember{
+        val commentList = remember {
             viewModel.commentList
         }
-        var inputComment by remember{
+        var inputComment by remember {
             mViewModel.inputComment
         }
         Column(Modifier.fillMaxSize()) {
-            CommonCompose.CommonAppBarUI(title = stringResource(id = R.string.common_comment), isBackPressed = true){
-               finish()
+            CommonCompose.CommonAppBarUI(
+                title = stringResource(id = R.string.common_comment),
+                isBackPressed = true
+            ) {
+                finish()
             }
             CommentUI(
                 list = commentList,
                 inputComment = inputComment,
-                reportEvent = {mViewModel.reportComment(it)},
-                inputCommentEvent = {inputComment = it}
-            ){
-                mViewModel.postComment()
-            }
+                reportEvent = { mViewModel.reportComment(it) },
+                inputCommentEvent = { inputComment = it },
+                postCommentEvent = { mViewModel.postComment() },
+                loadEvent = { mViewModel.getCommentList(false) }
+            )
         }
     }
 
     override fun init() {
         val postId = intent.getIntExtra("postId", 0)
         Log.d("EJ_LOG", "postId : $postId")
-        with(mViewModel){
+        with(mViewModel) {
             setPostId(postId)
             getCommentList()
         }

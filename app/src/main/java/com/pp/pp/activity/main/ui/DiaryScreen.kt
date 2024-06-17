@@ -1,5 +1,6 @@
 package com.pp.pp.activity.main.ui
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -12,6 +13,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,13 +31,15 @@ import com.pp.domain.model.post.PostModel
 import com.pp.pp.R
 import com.pp.pp.ui.CustomModifier.removeEffectClickable
 import com.pp.pp.ui.getRobotoFontFamily
+import com.pp.pp.ui.module.InfiniteListHandler
 import com.pp.pp.ui.theme.color_d9d9d9
 import com.pp.pp.ui.theme.color_white
 
 @Composable
 fun DiaryScreen(
     communityPostList: List<PostModel>,
-    onClickEvent: (PostModel) -> Unit
+    onClickEvent: (PostModel) -> Unit,
+    loadEvent: () -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -42,7 +47,7 @@ fun DiaryScreen(
             .fillMaxHeight()
     ) {
         when (communityPostList.isNotEmpty()) {
-            true -> DiaryListUI(communityPostList,onClickEvent)
+            true -> DiaryListUI(communityPostList,onClickEvent,loadEvent)
             false -> {
                 Image(
                     modifier = Modifier.align(Alignment.Center),
@@ -62,9 +67,12 @@ fun DiaryScreen(
 @Composable
 fun DiaryListUI(
     communityPostList: List<PostModel>,
-    onClickEvent: (PostModel) -> Unit
+    onClickEvent: (PostModel) -> Unit,
+    loadEvent: () -> Unit
 ) {
+    val lazyListState = rememberLazyGridState()
     LazyVerticalGrid(
+        state = lazyListState,
         columns = GridCells.Fixed(2)
     ) {
         items(
@@ -72,6 +80,11 @@ fun DiaryListUI(
         ) {
             DiaryItemUI(it,onClickEvent)
         }
+    }
+    //무한 스크롤
+    InfiniteListHandler(gridListState = lazyListState) {
+        Log.d("EJ_LOG", "infiniteList Call")
+        loadEvent()
     }
 }
 

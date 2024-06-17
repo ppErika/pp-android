@@ -81,7 +81,7 @@ class MainActivity : BaseActivity<MainViewModel>() {
             applicationContext.packageManager.getPackageInfo(applicationContext.packageName, 0)
 
         LaunchedEffect(key1 = isLogin) {
-            if(isLogin){
+            if (isLogin) {
                 mViewModel.getPostList()
             }
         }
@@ -95,19 +95,23 @@ class MainActivity : BaseActivity<MainViewModel>() {
                 // 나의 일기
                 composable(route = MainNav.MyDiary.name) {
                     mViewModel.setAppBarTitle(MainNav.MyDiary.name)
-                    DiaryScreen(emptyList()){
-
-                    }
+                    DiaryScreen(
+                        communityPostList = emptyList(),
+                        onClickEvent = {},
+                        loadEvent = {}
+                    )
                 }
                 // 커뮤니티
                 composable(route = MainNav.Community.name) {
                     mViewModel.setAppBarTitle(MainNav.Community.name)
                     when (isLogin) {
                         true -> DiaryScreen(
-                            communityPostList = communityPostList
-                        ){
-                            moveCommentActivity(it.id)
-                        }
+                            communityPostList = communityPostList,
+                            onClickEvent = {
+                                moveCommentActivity(it.id)
+                            },
+                            loadEvent = { mViewModel.getPostList(false) }
+                        )
 
                         false -> LoginScreen(
 
@@ -123,7 +127,7 @@ class MainActivity : BaseActivity<MainViewModel>() {
                         isLogin = isLogin,
                         version = packageInfo.versionName ?: "Unknown"
                     ) {
-                        when(it){
+                        when (it) {
                             "logout" -> mViewModel.logout()
                         }
 
@@ -197,8 +201,9 @@ class MainActivity : BaseActivity<MainViewModel>() {
             navController.navigate(destination)
         }
     }
-    private fun moveCommentActivity(postId: Int){
-        Log.d("EJ_LOG","moveCommentAcitivyt : $postId")
+
+    private fun moveCommentActivity(postId: Int) {
+        Log.d("EJ_LOG", "moveCommentAcitivyt : $postId")
         val intent = Intent(this, CommentActivity::class.java)
         intent.putExtra("postId", postId)
         startActivity(intent)

@@ -29,25 +29,48 @@ class CommentViewModel @Inject constructor(
     private val _reportCommentSuccessEvent = SingleFlowEvent<String>()
     val reportCommentSuccessEvent = _reportCommentSuccessEvent.flow
 
-
     private var _postId: Int? = null
+    private var _lastId: Int? = null
 
     fun setPostId(postId: Int) {
         _postId = postId
     }
 
-    fun getCommentList() {
+    fun setLastId(lastId: Int?) {
+        _lastId = lastId
+    }
+
+    fun getCommentList(isFirst: Boolean = true) {
         _postId?.let {
-            val commentsRequest = GetCommentsRequest().apply {
-                this.postId = it
-            }
-            viewModelScope.launch {
-                val result = commentsUseCase.execute(this@CommentViewModel, commentsRequest)
-                result?.let {
-                    Log.d("EJ_LOG", "getcomment reuslt : $it")
-                    commentList.addAll(it.comments)
+            Log.d("EJ_LOG", "_lastId______ : $_lastId")
+            val commentsRequest = if (isFirst) {
+                GetCommentsRequest().apply {
+                    this.postId = it
+                }
+            } else {
+                _lastId?.let {
+                    GetCommentsRequest().apply {
+                        this.postId = it
+                        if (_lastId != null) this.lastId = _lastId
+                    }
                 }
             }
+            commentsRequest?.let {
+                viewModelScope.launch {
+                    val result = commentsUseCase.execute(this@CommentViewModel, commentsRequest)
+                    result?.let {
+                        Log.d("EJ_LOG", "getcomment reuslt : $it")
+                        commentList.addAll(it.comments)
+                        if (it.comments.size == 20) {
+                            setLastId(commentList.last().id)
+                        } else {
+                            setLastId(null)
+                        }
+                        Log.d("EJ_LOG", "_lastId : $_lastId")
+                    }
+                }
+            }
+
         }
     }
 

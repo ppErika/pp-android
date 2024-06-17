@@ -12,10 +12,11 @@ fun CommentUI(
     inputComment: String,
     reportEvent: (CommentModel) -> Unit,
     inputCommentEvent: (String) -> Unit,
-    postCommentEvent: () -> Unit
+    postCommentEvent: () -> Unit,
+    loadEvent: () -> Unit
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
-        CommentListUI(list = list, reportEvent = reportEvent, modifier = Modifier.weight(1f))
+        CommentListUI(list = list, reportEvent = reportEvent, modifier = Modifier.weight(1f), loadEvent = loadEvent)
         CommentInputUI(
             modifier = Modifier.weight(0.1f),
             inputComment = inputComment,

@@ -57,6 +57,7 @@ class MainViewModel @Inject constructor(
     var communityPostList = mutableStateListOf<PostModel>()
         private set
 
+    private var lastId: Int? = null
     private var kakaoIdToken: String = ""
 
     // 탈퇴
@@ -137,15 +138,34 @@ class MainViewModel @Inject constructor(
     /**
      * 커뮤니티
      */
-    fun getPostList() {
-        val getPostsRequest = GetPostsRequest().apply {  }
-        viewModelScope.launch {
-            val response = getPostsUseCase.execute(this@MainViewModel, getPostsRequest)
-            response?.posts?.let{
-                communityPostList.clear()
-                communityPostList.addAll(it)
+    fun getPostList(isFirst: Boolean = true) {
+        val getPostsRequest = if(isFirst){
+            GetPostsRequest().apply {  }
+        }else{
+            lastId?.let{
+                GetPostsRequest().apply {
+                    this.lastId = it
+                }
             }
         }
+        getPostsRequest?.let{
+            viewModelScope.launch {
+                val response = getPostsUseCase.execute(this@MainViewModel, it)
+                response?.posts?.let{
+                    if(isFirst){
+                        communityPostList.clear()
+
+                    }
+                    communityPostList.addAll(it)
+                    if(it.size==20){
+                        lastId = it.last().id
+                    }else{
+                        lastId = null
+                    }
+                }
+            }
+        }
+
     }
     /**
      * 로그아웃
