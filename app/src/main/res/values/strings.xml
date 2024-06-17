@@ -18,4 +18,6 @@
     <string name="hint_title">제목을 작성해주세요.</string>
     <string name="hint_content">내용을 작성해주세요.</string>
     <string name="common_comment">댓글</string>
+    <string name="dialog_report">신고하시겠습니까?</string>
+    <string name="toast_report_success">신고되었습니다.</string>
 </resources>

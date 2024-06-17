@@ -5,6 +5,7 @@ import com.pp.data.remote.api.PpApi
 import com.pp.data.remote.api.PpAuthenticationApi
 import com.pp.domain.model.comments.GetCommentsRequest
 import com.pp.domain.model.comments.GetCommentsResponse
+import com.pp.domain.model.comments.PostCommentRequest
 import com.pp.domain.model.common.CommonResponse
 import com.pp.domain.model.post.GetPostsRequest
 import com.pp.domain.model.post.GetPostsResponse
@@ -89,6 +90,27 @@ class PpApiDataSourceImpl @Inject constructor(
                 postId = getCommentsRequest.postId,
                 lastId = getCommentsRequest.lastId,
                 limit = getCommentsRequest.limit
+            )
+        }
+    }
+
+    override suspend fun postComment(
+        remoteError: RemoteError,
+        postId: Int,
+        postCommentRequest: PostCommentRequest
+    ): String? {
+        return safeApiCallNoContext(remoteError) {
+            ppAuthenticationApi.postComment(
+                postId = postId,
+                content = postCommentRequest
+            )
+        }
+    }
+
+    override suspend fun reportComment(remoteError: RemoteError, commentId: Int): String? {
+        return safeApiCallNoContext(remoteError) {
+            ppAuthenticationApi.reportComment(
+                commentId = commentId
             )
         }
     }

@@ -1,38 +1,89 @@
 package com.pp.pp.viewmodel.comment
 
+import android.util.Log
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import com.pp.domain.model.comments.CommentModel
 import com.pp.domain.model.comments.GetCommentsRequest
+import com.pp.domain.model.comments.PostCommentRequest
 import com.pp.domain.usecase.comment.GetCommentsUseCase
+import com.pp.domain.usecase.comment.PostCommentUseCase
+import com.pp.domain.usecase.comment.ReportCommentUseCase
 import com.pp.pp.base.BaseViewModel
+import com.pp.pp.widget.SingleFlowEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class CommentViewModel @Inject constructor(
-    private val commentsUseCase: GetCommentsUseCase
-): BaseViewModel() {
-    var commentList = mutableListOf<CommentModel>()
+    private val commentsUseCase: GetCommentsUseCase,
+    private val postCommentUseCase: PostCommentUseCase,
+    private val reportCommentUseCase: ReportCommentUseCase
+) : BaseViewModel() {
+    var inputComment = mutableStateOf("")
         private set
+    var commentList = mutableStateListOf<CommentModel>()
+        private set
+    private val _reportCommentSuccessEvent = SingleFlowEvent<String>()
+    val reportCommentSuccessEvent = _reportCommentSuccessEvent.flow
+
 
     private var _postId: Int? = null
 
-    fun setPostId(postId: Int){
+    fun setPostId(postId: Int) {
         _postId = postId
     }
 
-    fun getCommentList(){
-        _postId?.let{
+    fun getCommentList() {
+        _postId?.let {
             val commentsRequest = GetCommentsRequest().apply {
                 this.postId = it
             }
             viewModelScope.launch {
-                val result = commentsUseCase.execute(this@CommentViewModel,commentsRequest)
-                result?.let{
+                val result = commentsUseCase.execute(this@CommentViewModel, commentsRequest)
+                result?.let {
+                    Log.d("EJ_LOG", "getcomment reuslt : $it")
                     commentList.addAll(it.comments)
                 }
             }
         }
     }
+
+    fun postComment() {
+        if (inputComment.value.isNotBlank()) {
+            _postId?.let { postId ->
+                val postCommentRequest = PostCommentRequest().apply {
+                    this.content = inputComment.value
+                }
+                viewModelScope.launch {
+                    val result =
+                        postCommentUseCase.execute(
+                            this@CommentViewModel,
+                            postId,
+                            postCommentRequest
+                        )
+                    Log.d("EJ_LOG", "postcomment reuslt : $result")
+                    result?.let {
+                        inputComment.value = ""
+                        commentList.clear()
+                        getCommentList()
+                    }
+                }
+            }
+        }
+    }
+
+    fun reportComment(commentModel: CommentModel) {
+        viewModelScope.launch {
+            val result = reportCommentUseCase.execute(this@CommentViewModel, commentModel.id)
+            Log.d("EJ_LOG", "reportcomment reuslt : $result")
+            result?.let {
+                commentList.remove(commentModel)
+                _reportCommentSuccessEvent.emit(it)
+            }
+        }
+    }
+
 }

@@ -1,6 +1,7 @@
 package com.pp.pp.activity.comment.ui
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.pp.domain.model.comments.CommentModel
@@ -8,11 +9,19 @@ import com.pp.domain.model.comments.CommentModel
 @Composable
 fun CommentUI(
     list: List<CommentModel>,
+    inputComment: String,
     reportEvent: (CommentModel) -> Unit,
-){
-    Column {
-        CommentListUI(list = list, reportEvent = reportEvent, modifier = Modifier.weight(0.9f))
-        CommentInputUI(modifier = Modifier.weight(0.1f))
+    inputCommentEvent: (String) -> Unit,
+    postCommentEvent: () -> Unit
+) {
+    Column(modifier = Modifier.fillMaxSize()) {
+        CommentListUI(list = list, reportEvent = reportEvent, modifier = Modifier.weight(1f))
+        CommentInputUI(
+            modifier = Modifier.weight(0.1f),
+            inputComment = inputComment,
+            inputCommentEvent = inputCommentEvent,
+            postCommentEvent = postCommentEvent
+        )
     }
 
 }

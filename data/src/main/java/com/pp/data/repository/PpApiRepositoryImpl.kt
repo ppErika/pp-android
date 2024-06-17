@@ -3,6 +3,7 @@ package com.pp.data.repository
 import com.pp.data.datasource.server.PpApiDataSource
 import com.pp.domain.model.comments.GetCommentsRequest
 import com.pp.domain.model.comments.GetCommentsResponse
+import com.pp.domain.model.comments.PostCommentRequest
 import com.pp.domain.model.common.CommonResponse
 import com.pp.domain.model.post.GetPostsRequest
 import com.pp.domain.model.post.GetPostsResponse
@@ -55,5 +56,17 @@ class PpApiRepositoryImpl @Inject constructor(
         getCommentsRequest: GetCommentsRequest
     ): GetCommentsResponse? {
         return ppApiDataSource.getComments(remoteError, getCommentsRequest)
+    }
+
+    override suspend fun postComment(
+        remoteError: RemoteError,
+        postId: Int,
+        postCommentRequest: PostCommentRequest
+    ): String? {
+        return ppApiDataSource.postComment(remoteError, postId, postCommentRequest)
+    }
+
+    override suspend fun reportComment(remoteError: RemoteError, postId: Int): String? {
+        return ppApiDataSource.reportComment(remoteError, postId)
     }
 }

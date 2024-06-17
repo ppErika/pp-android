@@ -5,38 +5,61 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.TextField
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.pp.pp.R
+import com.pp.pp.ui.CustomModifier.removeEffectClickable
 import com.pp.pp.ui.theme.color_bbbbbb
 import com.pp.pp.ui.theme.color_white
 
-@Preview
 @Composable
-fun CommentInputUI(modifier: Modifier = Modifier) {
+fun CommentInputUI(
+    modifier: Modifier = Modifier,
+    inputComment: String,
+    inputCommentEvent: (String) -> Unit,
+    postCommentEvent: () -> Unit
+) {
+    val keyboardController = LocalSoftwareKeyboardController.current
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
+        modifier = modifier
+            .padding(10.dp)
             .fillMaxWidth()
-            .border(width = 1.dp, color = color_bbbbbb, shape = RoundedCornerShape(42.dp)
+            .border(
+                width = 1.dp, color = color_bbbbbb, shape = RoundedCornerShape(42.dp)
             )
             .background(color = color_white)
+            .padding(10.dp)
     ) {
-        TextField(
-            value = "",
-            onValueChange = {},
-            label = { },
-            modifier = Modifier.weight(1f).background(color = color_white)
+        BasicTextField(
+            value = inputComment,
+            onValueChange = { inputCommentEvent(it) },
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(onDone = {
+                keyboardController?.hide() // 키보드 숨기기
+            }),
+            modifier = Modifier
+                .weight(1f)
         )
         Image(
+            modifier = Modifier
+                .removeEffectClickable {
+                    keyboardController?.hide() // 키보드 숨기기
+                    postCommentEvent()
+                }
+                .weight(0.1f),
             painter = painterResource(id = R.drawable.ic_comment_input_btn),
-            contentDescription = null
+            contentDescription = null,
         )
     }
 
