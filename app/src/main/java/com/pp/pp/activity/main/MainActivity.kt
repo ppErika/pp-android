@@ -32,11 +32,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.kakao.sdk.user.UserApiClient
 import com.pp.pp.R
+import com.pp.pp.activity.UploadDiaryActivity
+import com.pp.pp.activity.comment.CommentActivity
 import com.pp.pp.activity.main.route.MainNav
 import com.pp.pp.activity.main.ui.DiaryScreen
 import com.pp.pp.activity.main.ui.LoginScreen
 import com.pp.pp.activity.main.ui.SettingScreen
-import com.pp.pp.activity.main.ui.TermsOfUseScreen
 import com.pp.pp.activity.terms.TermsOfUseActivity
 import com.pp.pp.base.BaseActivity
 import com.pp.pp.ui.CommonCompose
@@ -81,7 +82,7 @@ class MainActivity : BaseActivity<MainViewModel>() {
             applicationContext.packageManager.getPackageInfo(applicationContext.packageName, 0)
 
         LaunchedEffect(key1 = isLogin) {
-            if(isLogin){
+            if (isLogin) {
                 mViewModel.getPostList()
             }
         }
@@ -95,14 +96,31 @@ class MainActivity : BaseActivity<MainViewModel>() {
                 // 나의 일기
                 composable(route = MainNav.MyDiary.name) {
                     mViewModel.setAppBarTitle(MainNav.MyDiary.name)
-                    DiaryScreen(emptyList())
+                    DiaryScreen(
+                        communityPostList = emptyList(),
+                        onClickItemEvent = {},
+                        onClickUploadEvent = {
+                            startActivity(
+                                Intent(
+                                    this@MainActivity,
+                                    UploadDiaryActivity::class.java
+                                )
+                            )
+                        },
+                        loadEvent = {}
+                    )
                 }
                 // 커뮤니티
                 composable(route = MainNav.Community.name) {
                     mViewModel.setAppBarTitle(MainNav.Community.name)
                     when (isLogin) {
                         true -> DiaryScreen(
-                            communityPostList = communityPostList
+                            communityPostList = communityPostList,
+                            onClickItemEvent = {
+                                moveCommentActivity(it.id) // 임시로 댓글창 이동
+                            },
+                            onClickUploadEvent = {},
+                            loadEvent = { mViewModel.getPostList(false) }
                         )
 
                         false -> LoginScreen(
@@ -119,7 +137,7 @@ class MainActivity : BaseActivity<MainViewModel>() {
                         isLogin = isLogin,
                         version = packageInfo.versionName ?: "Unknown"
                     ) {
-                        when(it){
+                        when (it) {
                             "logout" -> mViewModel.logout()
                         }
 
@@ -192,5 +210,12 @@ class MainActivity : BaseActivity<MainViewModel>() {
         if (::navController.isInitialized) {
             navController.navigate(destination)
         }
+    }
+
+    private fun moveCommentActivity(postId: Int) {
+        Log.d("EJ_LOG", "moveCommentAcitivyt : $postId")
+        val intent = Intent(this, CommentActivity::class.java)
+        intent.putExtra("postId", postId)
+        startActivity(intent)
     }
 }

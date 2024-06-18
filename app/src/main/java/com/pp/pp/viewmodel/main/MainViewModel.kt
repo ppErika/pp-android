@@ -12,12 +12,11 @@ import com.pp.domain.model.token.RevokeTokenRequest
 import com.pp.domain.usecase.datastore.DoLogoutUseCase
 import com.pp.domain.usecase.datastore.GetAccessTokenUseCase
 import com.pp.domain.usecase.datastore.SetAccessTokenUseCase
-import com.pp.domain.usecase.posts.GetPostsUseCase
+import com.pp.domain.usecase.post.GetPostsUseCase
 import com.pp.domain.usecase.token.OauthTokenUseCase
 import com.pp.domain.usecase.token.RevokeTokenUseCase
 import com.pp.domain.usecase.users.DeleteUserUseCase
 import com.pp.domain.usecase.users.UserRegisteredUseCase
-import com.pp.pp.activity.main.route.MainNav
 import com.pp.pp.base.BaseViewModel
 import com.pp.pp.widget.SingleFlowEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -58,6 +57,7 @@ class MainViewModel @Inject constructor(
     var communityPostList = mutableStateListOf<PostModel>()
         private set
 
+    private var lastId: Int? = null
     private var kakaoIdToken: String = ""
 
     // 탈퇴
@@ -138,15 +138,34 @@ class MainViewModel @Inject constructor(
     /**
      * 커뮤니티
      */
-    fun getPostList() {
-        val getPostsRequest = GetPostsRequest().apply {  }
-        viewModelScope.launch {
-            val response = getPostsUseCase.execute(this@MainViewModel, getPostsRequest)
-            response?.posts?.let{
-                communityPostList.clear()
-                communityPostList.addAll(it)
+    fun getPostList(isFirst: Boolean = true) {
+        val getPostsRequest = if(isFirst){
+            GetPostsRequest().apply {  }
+        }else{
+            lastId?.let{
+                GetPostsRequest().apply {
+                    this.lastId = it
+                }
             }
         }
+        getPostsRequest?.let{
+            viewModelScope.launch {
+                val response = getPostsUseCase.execute(this@MainViewModel, it)
+                response?.posts?.let{
+                    if(isFirst){
+                        communityPostList.clear()
+
+                    }
+                    communityPostList.addAll(it)
+                    if(it.size==20){
+                        lastId = it.last().id
+                    }else{
+                        lastId = null
+                    }
+                }
+            }
+        }
+
     }
     /**
      * 로그아웃

@@ -1,5 +1,8 @@
 package com.pp.domain.repository
 
+import com.pp.domain.model.comments.GetCommentsRequest
+import com.pp.domain.model.comments.GetCommentsResponse
+import com.pp.domain.model.comments.PostCommentRequest
 import com.pp.domain.model.common.CommonResponse
 import com.pp.domain.model.post.GetPostsRequest
 import com.pp.domain.model.post.GetPostsResponse
@@ -31,4 +34,17 @@ interface PpApiRepository {
         remoteError: RemoteError,
         userId: String
     ): CommonResponse?
+    suspend fun getComments(
+        remoteError: RemoteError,
+        getCommentsRequest: GetCommentsRequest
+    ): GetCommentsResponse?
+    suspend fun postComment(
+        remoteError: RemoteError,
+        postId: Int,
+        postCommentRequest: PostCommentRequest
+    ): String?
+    suspend fun reportComment(
+        remoteError: RemoteError,
+        postId: Int
+    ): String?
 }

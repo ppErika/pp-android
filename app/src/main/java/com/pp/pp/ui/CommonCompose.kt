@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
@@ -35,24 +36,28 @@ object CommonCompose {
         titleColor: Color = color_black,
         titleWeight: FontWeight = FontWeight.Bold,
         isBackPressed: Boolean = true,
-        onBackEvent:() -> Unit
-    ){
-        Row(modifier = Modifier
-            .padding(top = 10.dp, bottom= 10.dp)
-            .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically) {
+        onBackEvent: () -> Unit
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(top = 10.dp, bottom = 10.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
 
-            if(isBackPressed){
-                Box(modifier = Modifier
-                    .padding(start = 10.dp)
-                    .weight(1f)) {
+            if (isBackPressed) {
+                Box(
+                    modifier = Modifier
+                        .padding(start = 10.dp)
+                        .weight(1f)
+                ) {
                     BackPressedUI(iconColor = color_black) {
                         onBackEvent()
                     }
                 }
             }
             Text(
-                modifier = Modifier.padding(start=10.dp),
+                modifier = Modifier.padding(start = 10.dp),
                 text = title,
                 color = titleColor,
                 textAlign = TextAlign.Center,
@@ -61,14 +66,15 @@ object CommonCompose {
                 fontFamily = getRobotoFontFamily()
             )
 
-            if(isBackPressed)
+            if (isBackPressed)
                 Spacer(modifier = Modifier.weight(1f))
         }
     }
+
     @Composable
     inline fun BackPressedUI(
         painter: Painter = painterResource(id = R.drawable.ic_arrow_back),
-        iconColor : Color,
+        iconColor: Color,
         crossinline onClicked: () -> Unit,
     ) {
         Image(
@@ -79,10 +85,17 @@ object CommonCompose {
             painter = painter,
             contentDescription = null,
             contentScale = ContentScale.Fit,
-            colorFilter = ColorFilter.tint(iconColor))
+            colorFilter = ColorFilter.tint(iconColor)
+        )
     }
+
     @Composable
-    fun CommonButton(text: String, modifier: Modifier = Modifier, isEnabled:Boolean = true, onClick: () -> Unit){
+    fun CommonButton(
+        text: String,
+        modifier: Modifier = Modifier,
+        isEnabled: Boolean = true,
+        onClick: () -> Unit
+    ) {
         Button(
             onClick = { onClick() },
             colors = ButtonDefaults.buttonColors(
@@ -97,6 +110,42 @@ object CommonCompose {
                 .padding(top = 35.dp),
         ) {
             Text(text = text)
+        }
+    }
+
+    @Composable
+    fun CommonDialog(
+        isShow: Boolean,
+        content: String,
+        onClickOk: () -> Unit,
+        onClickCancel: () -> Unit
+    ) {
+        if (isShow) {
+            AlertDialog(
+                onDismissRequest = { onClickCancel() },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            onClickOk()
+                        }) {
+                        Text("확인")
+                    }
+                },
+                dismissButton = {
+                    Button(
+                        onClick = {
+                            onClickCancel()
+                        }) {
+                        Text("취소")
+                    }
+                },
+                text = {
+                    Text(
+                        text = content,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            )
         }
     }
 }

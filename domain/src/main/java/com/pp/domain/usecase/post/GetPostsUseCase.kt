@@ -1,4 +1,4 @@
-package com.pp.domain.usecase.posts
+package com.pp.domain.usecase.post
 
 import com.pp.domain.model.post.GetPostsRequest
 import com.pp.domain.model.post.GetPostsResponse
