@@ -17,6 +17,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,6 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -31,6 +34,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.kakao.sdk.user.UserApiClient
+import com.pp.domain.model.post.PostModel
 import com.pp.pp.R
 import com.pp.pp.activity.UploadDiaryActivity
 import com.pp.pp.activity.comment.CommentActivity
@@ -47,6 +51,7 @@ import com.pp.pp.viewmodel.main.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : BaseActivity<MainViewModel>() {
@@ -78,6 +83,8 @@ class MainActivity : BaseActivity<MainViewModel>() {
         val communityPostList = remember {
             mViewModel.communityPostList
         }
+        val postList by mViewModel.postList.observeAsState(emptyList())
+
         val packageInfo =
             applicationContext.packageManager.getPackageInfo(applicationContext.packageName, 0)
 
@@ -85,6 +92,7 @@ class MainActivity : BaseActivity<MainViewModel>() {
             if (isLogin) {
                 mViewModel.getPostList()
             }
+            mViewModel.fetchMyDiaryList()
         }
         Column(Modifier.fillMaxSize()) {
             CommonCompose.CommonAppBarUI(title = appBarTitle, isBackPressed = false) {}
@@ -97,7 +105,7 @@ class MainActivity : BaseActivity<MainViewModel>() {
                 composable(route = MainNav.MyDiary.name) {
                     mViewModel.setAppBarTitle(MainNav.MyDiary.name)
                     DiaryScreen(
-                        communityPostList = emptyList(),
+                        communityPostList = postList,
                         onClickItemEvent = {},
                         onClickUploadEvent = {
                             startActivity(
@@ -107,9 +115,10 @@ class MainActivity : BaseActivity<MainViewModel>() {
                                 )
                             )
                         },
-                        loadEvent = {}
+                        loadEvent = { postList }
                     )
                 }
+
                 // 커뮤니티
                 composable(route = MainNav.Community.name) {
                     mViewModel.setAppBarTitle(MainNav.Community.name)
