@@ -5,6 +5,9 @@ import com.pp.domain.model.comments.GetCommentsResponse
 import com.pp.domain.model.comments.PostCommentRequest
 import com.pp.domain.model.common.CommonResponse
 import com.pp.domain.model.post.GetPostsResponse
+import com.pp.domain.model.post.GetPreSignedUrlRequest
+import com.pp.domain.model.post.GetPreSignedUrlResponse
+import com.pp.domain.model.post.UploadPostRequest
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -19,6 +22,14 @@ interface PpAuthenticationApi {
         @Query("limit") limit: Int,
         @Query("lastId") lastId: Int?
     ): Response<ApiDataResponse<GetPostsResponse>>
+    @GET("api/v1/presigned-urls/upload")
+    suspend fun getPreSignedUrl(
+        @Body getPreSignedUrlRequest: GetPreSignedUrlRequest
+    ): Response<ApiDataResponse<GetPreSignedUrlResponse>>
+    @POST("api/v1/posts")
+    suspend fun uploadPost(
+        @Body uploadPostRequest: UploadPostRequest
+    ): Response<ApiDataResponse<CommonResponse?>>
     @GET("api/v1/posts/{postId}/comments")
     suspend fun getComments(
         @Path("postId") postId: Int,

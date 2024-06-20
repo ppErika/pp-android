@@ -9,6 +9,9 @@ import com.pp.domain.model.comments.PostCommentRequest
 import com.pp.domain.model.common.CommonResponse
 import com.pp.domain.model.post.GetPostsRequest
 import com.pp.domain.model.post.GetPostsResponse
+import com.pp.domain.model.post.GetPreSignedUrlRequest
+import com.pp.domain.model.post.GetPreSignedUrlResponse
+import com.pp.domain.model.post.UploadPostRequest
 import com.pp.domain.model.token.OauthTokenRequest
 import com.pp.domain.model.token.OauthTokenResponse
 import com.pp.domain.model.token.RevokeTokenRequest
@@ -50,18 +53,6 @@ class PpApiDataSourceImpl @Inject constructor(
         }
     }
 
-    override suspend fun getPosts(
-        remoteError: RemoteError,
-        getPostsRequest: GetPostsRequest
-    ): GetPostsResponse? {
-        return safeApiCallData(remoteError) {
-            ppAuthenticationApi.getPosts(
-                lastId = getPostsRequest.lastId,
-                limit = getPostsRequest.limit
-            )
-        }
-    }
-
     override suspend fun revokeToken(
         remoteError: RemoteError,
         revokeTokenRequest: RevokeTokenRequest
@@ -79,6 +70,30 @@ class PpApiDataSourceImpl @Inject constructor(
         return safeApiCall(remoteError) {
             ppApi.deleteUser(userId)
         }
+    }
+    override suspend fun getPosts(
+        remoteError: RemoteError,
+        getPostsRequest: GetPostsRequest
+    ): GetPostsResponse? {
+        return safeApiCallData(remoteError) {
+            ppAuthenticationApi.getPosts(
+                lastId = getPostsRequest.lastId,
+                limit = getPostsRequest.limit
+            )
+        }
+    }
+    override suspend fun getPreSignedUrl(
+        remoteError: RemoteError,
+        getPreSignedUrlRequest: GetPreSignedUrlRequest
+    ): GetPreSignedUrlResponse? {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun uploadPost(
+        remoteError: RemoteError,
+        uploadPostRequest: UploadPostRequest
+    ): String? {
+        TODO("Not yet implemented")
     }
 
     override suspend fun getComments(

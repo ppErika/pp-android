@@ -8,11 +8,11 @@ plugins {
 }
 
 android {
-    namespace = "com.pp.pp"
+    namespace = "com.pp.community"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.pp.pp"
+        applicationId = "com.pp.community"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
