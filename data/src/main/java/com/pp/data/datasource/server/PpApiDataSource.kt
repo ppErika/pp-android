@@ -14,6 +14,7 @@ import com.pp.domain.model.token.OauthTokenResponse
 import com.pp.domain.model.token.RevokeTokenRequest
 import com.pp.domain.model.users.UserRegisteredResponse
 import com.pp.domain.utils.RemoteError
+import okhttp3.RequestBody
 
 interface PpApiDataSource {
     suspend fun oauthToken(
@@ -57,5 +58,10 @@ interface PpApiDataSource {
     suspend fun reportComment(
         remoteError: RemoteError,
         commentId: Int
+    ): String?
+    suspend fun uploadFile(
+        remoteError: RemoteError,
+        url: String,
+        file: RequestBody
     ): String?
 }

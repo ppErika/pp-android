@@ -3,6 +3,7 @@ package com.pp.data.datasource.server
 import com.pp.data.base.BaseRepository
 import com.pp.data.remote.api.PpApi
 import com.pp.data.remote.api.PpAuthenticationApi
+import com.pp.data.remote.api.S3Api
 import com.pp.domain.model.comments.GetCommentsRequest
 import com.pp.domain.model.comments.GetCommentsResponse
 import com.pp.domain.model.comments.PostCommentRequest
@@ -17,11 +18,13 @@ import com.pp.domain.model.token.OauthTokenResponse
 import com.pp.domain.model.token.RevokeTokenRequest
 import com.pp.domain.model.users.UserRegisteredResponse
 import com.pp.domain.utils.RemoteError
+import okhttp3.RequestBody
 import javax.inject.Inject
 
 class PpApiDataSourceImpl @Inject constructor(
     private val ppAuthenticationApi: PpAuthenticationApi,
-    private val ppApi: PpApi
+    private val ppApi: PpApi,
+    private val s3Api: S3Api
 ) : BaseRepository(), PpApiDataSource {
     override suspend fun oauthToken(
         remoteError: RemoteError,
@@ -86,14 +89,22 @@ class PpApiDataSourceImpl @Inject constructor(
         remoteError: RemoteError,
         getPreSignedUrlRequest: GetPreSignedUrlRequest
     ): GetPreSignedUrlResponse? {
-        TODO("Not yet implemented")
+        return safeApiCallData(remoteError){
+            ppAuthenticationApi.getPreSignedUrl(
+                getPreSignedUrlRequest
+            )
+        }
     }
 
     override suspend fun uploadPost(
         remoteError: RemoteError,
         uploadPostRequest: UploadPostRequest
     ): String? {
-        TODO("Not yet implemented")
+        return safeApiCallNoContext(remoteError) {
+            ppAuthenticationApi.uploadPost(
+                uploadPostRequest
+            )
+        }
     }
 
     override suspend fun getComments(
@@ -127,6 +138,12 @@ class PpApiDataSourceImpl @Inject constructor(
             ppAuthenticationApi.reportComment(
                 commentId = commentId
             )
+        }
+    }
+
+    override suspend fun uploadFile(remoteError: RemoteError, url: String, file: RequestBody): String? {
+        return safeApiCallNoContext(remoteError) {
+            s3Api.uploadFile(url,file)
         }
     }
 

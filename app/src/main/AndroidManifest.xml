@@ -53,14 +53,9 @@
             android:exported="true"
             android:theme="@style/Theme.PP" />
         <activity
-            android:name=".activity.upload.UploadDiaryActivity"
+            android:name=".activity.UploadDiaryActivity"
             android:exported="true"
             android:theme="@style/Theme.PP">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
     </application>
 

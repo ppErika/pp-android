@@ -1,12 +1,20 @@
 package com.pp.domain.model.post
 
 data class GetPreSignedUrlRequest (
-    val presignedUploadUrlRequests: List<PresignedUploadUrl> = mutableListOf()
+    var presignedUploadUrlRequests: List<PreSignedUploadUrl> = mutableListOf()
 )
 
-data class PresignedUploadUrl (
-    val fileType: String,
-    val fileName: String,
-    val fileContentLength: Int,
-    val fileContentType: String
+data class PreSignedUploadUrl (
+    var fileType: String,
+    var fileName: String,
+    var fileContentLength: Long,
+    var fileContentType: String
+)
+
+data class PreSignedUploadUrlTemp (
+    var fileType: String,
+    var fileName: String,
+    var fileContentLength: Long,
+    var fileContentType: String,
+    var filePath: String
 )

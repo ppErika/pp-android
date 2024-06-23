@@ -1,7 +1,7 @@
 package com.pp.domain.model.post
 
 data class GetPreSignedUrlResponse (
-    val presignedUploadUrlResponses: List<PresignedUploadResponseData> = mutableListOf()
+    val presignedUploadFiles: List<PresignedUploadResponseData> = mutableListOf()
 )
 
 data class PresignedUploadResponseData (

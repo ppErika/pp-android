@@ -32,7 +32,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.kakao.sdk.user.UserApiClient
 import com.pp.community.R
-import com.pp.community.activity.upload.UploadDiaryActivity
+import com.pp.community.activity.UploadDiaryActivity
 import com.pp.community.activity.comment.CommentActivity
 import com.pp.community.activity.main.route.MainNav
 import com.pp.community.activity.main.ui.DiaryScreen
@@ -100,12 +100,7 @@ class MainActivity : BaseActivity<MainViewModel>() {
                         communityPostList = emptyList(),
                         onClickItemEvent = {},
                         onClickUploadEvent = {
-                            startActivity(
-                                Intent(
-                                    this@MainActivity,
-                                    UploadDiaryActivity::class.java
-                                )
-                            )
+                            moveUploadActivity(MainNav.MyDiary.name)
                         },
                         loadEvent = {}
                     )
@@ -119,7 +114,9 @@ class MainActivity : BaseActivity<MainViewModel>() {
                             onClickItemEvent = {
                                 moveCommentActivity(it.id) // 임시로 댓글창 이동
                             },
-                            onClickUploadEvent = {},
+                            onClickUploadEvent = {
+                                moveUploadActivity(MainNav.Community.name)
+                            },
                             loadEvent = { mViewModel.getPostList(false) }
                         )
 
@@ -216,6 +213,12 @@ class MainActivity : BaseActivity<MainViewModel>() {
         Log.d("EJ_LOG", "moveCommentAcitivyt : $postId")
         val intent = Intent(this, CommentActivity::class.java)
         intent.putExtra("postId", postId)
+        startActivity(intent)
+    }
+
+    private fun moveUploadActivity(type: String) {
+        val intent = Intent(this@MainActivity, UploadDiaryActivity::class.java)
+        intent.putExtra("type", type)
         startActivity(intent)
     }
 }

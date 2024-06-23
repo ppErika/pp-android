@@ -7,12 +7,16 @@ import com.pp.domain.model.comments.PostCommentRequest
 import com.pp.domain.model.common.CommonResponse
 import com.pp.domain.model.post.GetPostsRequest
 import com.pp.domain.model.post.GetPostsResponse
+import com.pp.domain.model.post.GetPreSignedUrlRequest
+import com.pp.domain.model.post.GetPreSignedUrlResponse
+import com.pp.domain.model.post.UploadPostRequest
 import com.pp.domain.model.token.OauthTokenRequest
 import com.pp.domain.model.token.OauthTokenResponse
 import com.pp.domain.model.token.RevokeTokenRequest
 import com.pp.domain.model.users.UserRegisteredResponse
 import com.pp.domain.repository.PpApiRepository
 import com.pp.domain.utils.RemoteError
+import okhttp3.RequestBody
 import javax.inject.Inject
 
 class PpApiRepositoryImpl @Inject constructor(
@@ -37,6 +41,20 @@ class PpApiRepositoryImpl @Inject constructor(
         getPostsRequest: GetPostsRequest
     ): GetPostsResponse? {
         return ppApiDataSource.getPosts(remoteError, getPostsRequest)
+    }
+
+    override suspend fun getPreSignedUrl(
+        remoteError: RemoteError,
+        getPreSignedUrlRequest: GetPreSignedUrlRequest
+    ): GetPreSignedUrlResponse? {
+        return ppApiDataSource.getPreSignedUrl(remoteError, getPreSignedUrlRequest)
+    }
+
+    override suspend fun uploadPost(
+        remoteError: RemoteError,
+        uploadPostRequest: UploadPostRequest
+    ): String? {
+        return ppApiDataSource.uploadPost(remoteError, uploadPostRequest)
     }
 
     override suspend fun revokeToken(
@@ -67,5 +85,13 @@ class PpApiRepositoryImpl @Inject constructor(
 
     override suspend fun reportComment(remoteError: RemoteError, postId: Int): String? {
         return ppApiDataSource.reportComment(remoteError, postId)
+    }
+
+    override suspend fun uploadFile(
+        remoteError: RemoteError,
+        url: String,
+        file: RequestBody
+    ): String? {
+        return ppApiDataSource.uploadFile(remoteError, url, file)
     }
 }

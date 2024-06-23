@@ -3,13 +3,14 @@ package com.pp.community.di.module
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
-import com.pp.data.remote.api.PpApi
-import com.pp.data.remote.api.PpAuthenticationApi
-import com.pp.data.remote.api.PpRefreshApi
 import com.pp.community.widget.AccessTokenInterceptor
 import com.pp.community.widget.AuthAuthenticator
 import com.pp.community.widget.NullOnEmptyConverterFactory
 import com.pp.community.widget.RefreshTokenInterceptor
+import com.pp.data.remote.api.PpApi
+import com.pp.data.remote.api.PpAuthenticationApi
+import com.pp.data.remote.api.PpRefreshApi
+import com.pp.data.remote.api.S3Api
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -81,6 +82,16 @@ object NetworkModule {
             .writeTimeout(60, TimeUnit.SECONDS)
             .build()
     }
+    @[Provides Singleton S3Client]
+    fun provideS3OkHttpClient(
+    ): OkHttpClient {
+        return OkHttpClient.Builder()
+            .addInterceptor(loggingInterceptor())
+            .readTimeout(60, TimeUnit.SECONDS)
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .writeTimeout(60, TimeUnit.SECONDS)
+            .build()
+    }
 
     @Provides
     @Singleton
@@ -111,6 +122,15 @@ object NetworkModule {
     ): Retrofit {
         return createRetrofit(okHttpClient, gsonConverterFactory)
     }
+    @Provides
+    @Singleton
+    @Named("s3Retrofit")
+    fun provideS3Retrofit(
+        @S3Client okHttpClient: OkHttpClient,
+        gsonConverterFactory: GsonConverterFactory
+    ): Retrofit {
+        return createRetrofit(okHttpClient, gsonConverterFactory)
+    }
 
     private fun createRetrofit(okHttpClient: OkHttpClient, gsonConverterFactory: GsonConverterFactory): Retrofit {
         return Retrofit.Builder()
@@ -136,5 +156,10 @@ object NetworkModule {
     @Singleton
     fun provideRefreshTokenApiService(@Named("refreshTokenRetrofit") retrofit: Retrofit): PpRefreshApi {
         return retrofit.create(PpRefreshApi::class.java)
+    }
+    @Provides
+    @Singleton
+    fun provideS3ApiService(@Named("s3Retrofit") retrofit: Retrofit): S3Api {
+        return retrofit.create(S3Api::class.java)
     }
 }

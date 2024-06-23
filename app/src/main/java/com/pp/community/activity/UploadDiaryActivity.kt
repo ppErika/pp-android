@@ -1,6 +1,9 @@
-package com.pp.community.activity.upload
+package com.pp.community.activity
 
+import android.graphics.BitmapFactory
 import android.net.Uri
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -53,16 +56,25 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import com.pp.community.R
+import com.pp.community.activity.main.route.MainNav
 import com.pp.community.base.BaseActivity
 import com.pp.community.ui.theme.color_white
+import com.pp.community.utils.FileUtils
+import com.pp.community.utils.FileUtils.getFileInfo
 import com.pp.community.viewmodel.UploadDiaryViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.onEach
 
 @AndroidEntryPoint
 class UploadDiaryActivity : BaseActivity<UploadDiaryViewModel>() {
     override val viewModel: UploadDiaryViewModel by viewModels()
 
     override fun observerViewModel() {
+        with(mViewModel){
+            postErrorEvent.onEach {
+                Toast.makeText(this@UploadDiaryActivity, it, Toast.LENGTH_SHORT).show()
+            }
+        }
 
     }
 
@@ -78,8 +90,21 @@ class UploadDiaryActivity : BaseActivity<UploadDiaryViewModel>() {
         val galleryLauncher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.GetMultipleContents()
         ) { uris: List<Uri> ->
+            val maxSizeInBytes = 1048576 // 1MB
+
+            val resizedUris = uris.take(3).mapNotNull { uri ->
+                val bitmap = FileUtils.getBitmapFromUri(this, uri)
+                bitmap?.let {
+                    val resizedBitmap = FileUtils.resizeBitmap(it, 1024, 1024) // Adjust size as needed
+                    val compressedImage = FileUtils.compressBitmap(resizedBitmap, maxSizeInBytes)
+                    val compressedBitmap = BitmapFactory.decodeByteArray(compressedImage, 0, compressedImage.size)
+                    FileUtils.saveBitmapToTempFile(this, compressedBitmap)
+                }
+            }
+            Log.d("EJ_LOG","resizedUris : $resizedUris")
+
             // Handle the result
-            selectedImageUris = uris.take(3) // Limit to 3 images
+            selectedImageUris = resizedUris
         }
 
         Scaffold(
@@ -236,9 +261,26 @@ class UploadDiaryActivity : BaseActivity<UploadDiaryViewModel>() {
                             if (title.isBlank() || content.isBlank()) {
                                 showShortToast("제목과 내용을 입력해주세요.")
                             } else {
-                                viewModel.saveDiaryEntry(title, content, selectedImageUris)
-                                showShortToast("업로드에 성공했습니다.")
-                                finish()
+                                when(mViewModel.uploadType){
+                                    MainNav.MyDiary.name -> {
+                                        viewModel.saveDiaryEntry(title, content, selectedImageUris)
+                                        showShortToast("업로드에 성공했습니다.")
+                                        finish()
+                                    }
+                                    MainNav.Community.name -> {
+                                        when(selectedImageUris.isEmpty()){
+                                            true -> mViewModel.uploadPost(title, content)
+                                            false ->{
+                                                val fileInfoList = selectedImageUris.map { uri -> getFileInfo(this@UploadDiaryActivity,"POST_IMAGE", uri) }
+
+                                                mViewModel.getPreSignedUrl(title, content, fileInfoList)
+                                            }
+                                        }
+
+
+                                    }
+                                }
+
                             }
                         },
                         colors = ButtonDefaults.buttonColors(
@@ -266,6 +308,7 @@ class UploadDiaryActivity : BaseActivity<UploadDiaryViewModel>() {
     }
 
     override fun init() {
-
+        val uploadType = intent.getStringExtra("type") ?: MainNav.Community.name
+        mViewModel.uploadType = uploadType
     }
 }

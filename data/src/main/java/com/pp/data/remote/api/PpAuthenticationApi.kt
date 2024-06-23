@@ -22,7 +22,7 @@ interface PpAuthenticationApi {
         @Query("limit") limit: Int,
         @Query("lastId") lastId: Int?
     ): Response<ApiDataResponse<GetPostsResponse>>
-    @GET("api/v1/presigned-urls/upload")
+    @POST("api/v1/presigned-urls/upload")
     suspend fun getPreSignedUrl(
         @Body getPreSignedUrlRequest: GetPreSignedUrlRequest
     ): Response<ApiDataResponse<GetPreSignedUrlResponse>>
