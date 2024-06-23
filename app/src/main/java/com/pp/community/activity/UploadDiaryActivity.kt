@@ -24,7 +24,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -54,15 +53,18 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.lifecycleScope
 import coil.compose.rememberImagePainter
 import com.pp.community.R
 import com.pp.community.activity.main.route.MainNav
 import com.pp.community.base.BaseActivity
+import com.pp.community.ui.theme.color_main
 import com.pp.community.ui.theme.color_white
 import com.pp.community.utils.FileUtils
 import com.pp.community.utils.FileUtils.getFileInfo
 import com.pp.community.viewmodel.UploadDiaryViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 @AndroidEntryPoint
@@ -73,7 +75,11 @@ class UploadDiaryActivity : BaseActivity<UploadDiaryViewModel>() {
         with(mViewModel){
             postErrorEvent.onEach {
                 Toast.makeText(this@UploadDiaryActivity, it, Toast.LENGTH_SHORT).show()
-            }
+            }.launchIn(lifecycleScope)
+            postSuccessEvent.onEach {
+                Toast.makeText(this@UploadDiaryActivity, it, Toast.LENGTH_SHORT).show()
+                finish()
+            }.launchIn(lifecycleScope)
         }
 
     }
@@ -121,17 +127,9 @@ class UploadDiaryActivity : BaseActivity<UploadDiaryViewModel>() {
                         )
                     },
                     navigationIcon = {
-                        IconButton(onClick = { /* do something */ }) {
+                        IconButton(onClick = { finish()}) {
                             Icon(
                                 imageVector = Icons.Filled.KeyboardArrowLeft,
-                                contentDescription = "Localized description"
-                            )
-                        }
-                    },
-                    actions = {
-                        IconButton(onClick = { /* do something */ }) {
-                            Icon(
-                                imageVector = Icons.Filled.MoreVert,
                                 contentDescription = "Localized description"
                             )
                         }
@@ -284,7 +282,7 @@ class UploadDiaryActivity : BaseActivity<UploadDiaryViewModel>() {
                             }
                         },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = colorResource(id = R.color.main_color),
+                            containerColor = color_main,
                             contentColor = Color.White,
                             disabledContainerColor = Color.Gray,
                             disabledContentColor = Color.White

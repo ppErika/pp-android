@@ -34,6 +34,8 @@ class UploadDiaryViewModel @Inject constructor(
 
     private val _postErrorEvent = SingleFlowEvent<String>()
     val postErrorEvent = _postErrorEvent.flow
+    private val _postSuccessEvent = SingleFlowEvent<String>()
+    val postSuccessEvent = _postSuccessEvent.flow
 
     var uploadType: String = ""
 
@@ -126,6 +128,9 @@ class UploadDiaryViewModel @Inject constructor(
             val response = uploadPostUseCase.execute(this@UploadDiaryViewModel, uploadPostRequest)
             response?.let {
                 Log.d("EJ_LOG", "uploadPost : $response")
+                _postSuccessEvent.emit("업로드에 성공했습니다.")
+            } ?: run {
+                _postErrorEvent.emit("post upload fail")
             }
         }
     }
