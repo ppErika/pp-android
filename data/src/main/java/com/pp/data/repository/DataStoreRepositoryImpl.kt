@@ -30,4 +30,11 @@ class DataStoreRepositoryImpl @Inject constructor(
     override suspend fun getRefreshToken(): Flow<String?> = dataStorePreferences.data.map {
         it[KEY_REFRESH_TOKEN]
     }
+
+    override suspend fun doLogout() {
+        dataStorePreferences.edit { preferences ->
+            preferences.remove(KEY_ACCESS_TOKEN)
+            preferences.remove(KEY_REFRESH_TOKEN)
+        }
+    }
 }

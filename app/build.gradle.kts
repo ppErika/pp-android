@@ -8,11 +8,11 @@ plugins {
 }
 
 android {
-    namespace = "com.pp.pp"
+    namespace = "com.pp.community"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.pp.pp"
+        applicationId = "com.pp.community"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
@@ -65,6 +65,7 @@ dependencies {
     implementation(libs.activity.compose)
     implementation(platform(libs.compose.bom))
     implementation(libs.junit)
+    implementation(libs.room.ktx)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation(platform(libs.compose.bom))

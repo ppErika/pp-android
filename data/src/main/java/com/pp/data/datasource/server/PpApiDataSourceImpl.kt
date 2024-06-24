@@ -3,18 +3,28 @@ package com.pp.data.datasource.server
 import com.pp.data.base.BaseRepository
 import com.pp.data.remote.api.PpApi
 import com.pp.data.remote.api.PpAuthenticationApi
+import com.pp.data.remote.api.S3Api
+import com.pp.domain.model.comments.GetCommentsRequest
+import com.pp.domain.model.comments.GetCommentsResponse
+import com.pp.domain.model.comments.PostCommentRequest
+import com.pp.domain.model.common.CommonResponse
 import com.pp.domain.model.post.GetPostsRequest
 import com.pp.domain.model.post.GetPostsResponse
+import com.pp.domain.model.post.GetPreSignedUrlRequest
+import com.pp.domain.model.post.GetPreSignedUrlResponse
+import com.pp.domain.model.post.UploadPostRequest
 import com.pp.domain.model.token.OauthTokenRequest
 import com.pp.domain.model.token.OauthTokenResponse
+import com.pp.domain.model.token.RevokeTokenRequest
 import com.pp.domain.model.users.UserRegisteredResponse
 import com.pp.domain.utils.RemoteError
+import okhttp3.RequestBody
 import javax.inject.Inject
 
 class PpApiDataSourceImpl @Inject constructor(
     private val ppAuthenticationApi: PpAuthenticationApi,
-    private val ppApi: PpApi
-
+    private val ppApi: PpApi,
+    private val s3Api: S3Api
 ) : BaseRepository(), PpApiDataSource {
     override suspend fun oauthToken(
         remoteError: RemoteError,
@@ -46,9 +56,26 @@ class PpApiDataSourceImpl @Inject constructor(
         }
     }
 
+    override suspend fun revokeToken(
+        remoteError: RemoteError,
+        revokeTokenRequest: RevokeTokenRequest
+    ): String? {
+        return safeApiCallNoContext(remoteError) {
+            ppApi.revokeToken(
+                client_id = revokeTokenRequest.client_id,
+                token = revokeTokenRequest.token,
+                token_type_hint = revokeTokenRequest.token_type_hint
+            )
+        }
+    }
+
+    override suspend fun deleteUser(remoteError: RemoteError, userId: String): CommonResponse? {
+        return safeApiCall(remoteError) {
+            ppApi.deleteUser(userId)
+        }
+    }
     override suspend fun getPosts(
         remoteError: RemoteError,
-        accessToken: String,
         getPostsRequest: GetPostsRequest
     ): GetPostsResponse? {
         return safeApiCallData(remoteError) {
@@ -56,6 +83,67 @@ class PpApiDataSourceImpl @Inject constructor(
                 lastId = getPostsRequest.lastId,
                 limit = getPostsRequest.limit
             )
+        }
+    }
+    override suspend fun getPreSignedUrl(
+        remoteError: RemoteError,
+        getPreSignedUrlRequest: GetPreSignedUrlRequest
+    ): GetPreSignedUrlResponse? {
+        return safeApiCallData(remoteError){
+            ppAuthenticationApi.getPreSignedUrl(
+                getPreSignedUrlRequest
+            )
+        }
+    }
+
+    override suspend fun uploadPost(
+        remoteError: RemoteError,
+        uploadPostRequest: UploadPostRequest
+    ): String? {
+        return safeApiCallNoContext(remoteError) {
+            ppAuthenticationApi.uploadPost(
+                uploadPostRequest
+            )
+        }
+    }
+
+    override suspend fun getComments(
+        remoteError: RemoteError,
+        getCommentsRequest: GetCommentsRequest
+    ): GetCommentsResponse? {
+        return safeApiCallData(remoteError) {
+            ppAuthenticationApi.getComments(
+                postId = getCommentsRequest.postId,
+                lastId = getCommentsRequest.lastId,
+                limit = getCommentsRequest.limit
+            )
+        }
+    }
+
+    override suspend fun postComment(
+        remoteError: RemoteError,
+        postId: Int,
+        postCommentRequest: PostCommentRequest
+    ): String? {
+        return safeApiCallNoContext(remoteError) {
+            ppAuthenticationApi.postComment(
+                postId = postId,
+                content = postCommentRequest
+            )
+        }
+    }
+
+    override suspend fun reportComment(remoteError: RemoteError, commentId: Int): String? {
+        return safeApiCallNoContext(remoteError) {
+            ppAuthenticationApi.reportComment(
+                commentId = commentId
+            )
+        }
+    }
+
+    override suspend fun uploadFile(remoteError: RemoteError, url: String, file: RequestBody): String? {
+        return safeApiCallNoContext(remoteError) {
+            s3Api.uploadFile(url,file)
         }
     }
 
