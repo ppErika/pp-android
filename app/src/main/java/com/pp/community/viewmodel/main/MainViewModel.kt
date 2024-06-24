@@ -4,6 +4,9 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
+import com.pp.community.base.BaseViewModel
+import com.pp.community.utils.DecodeJwtUtil
+import com.pp.community.widget.SingleFlowEvent
 import com.pp.domain.model.post.GetPostsRequest
 import com.pp.domain.model.post.PostModel
 import com.pp.domain.model.token.OauthTokenRequest
@@ -17,8 +20,6 @@ import com.pp.domain.usecase.token.OauthTokenUseCase
 import com.pp.domain.usecase.token.RevokeTokenUseCase
 import com.pp.domain.usecase.users.DeleteUserUseCase
 import com.pp.domain.usecase.users.UserRegisteredUseCase
-import com.pp.community.base.BaseViewModel
-import com.pp.community.widget.SingleFlowEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -35,7 +36,8 @@ class MainViewModel @Inject constructor(
     private val getPostsUseCase: GetPostsUseCase,
     private val revokeTokenUseCase: RevokeTokenUseCase,
     private val doLogoutUseCase: DoLogoutUseCase,
-    private val deleteUserUseCase: DeleteUserUseCase
+    private val deleteUserUseCase: DeleteUserUseCase,
+    private val decodeJwtUtil: DecodeJwtUtil
 ) : BaseViewModel() {
     // 공통
     var appBarTitle = mutableStateOf("")
@@ -186,8 +188,9 @@ class MainViewModel @Inject constructor(
     /**
      * 탈퇴하기
      */
-    fun deleteUser(userId: String){
+    fun deleteUser(){
         viewModelScope.launch {
+            val userId = decodeJwtUtil.getUserId(token = getAccessToken2()?:"")
             val response = deleteUserUseCase.execute(this@MainViewModel,userId)
             response?.let{
                 // TODO TEST
