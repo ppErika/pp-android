@@ -127,7 +127,7 @@ class UploadDiaryActivity : BaseActivity<UploadDiaryViewModel>() {
                         )
                     },
                     navigationIcon = {
-                        IconButton(onClick = { finish()}) {
+                        IconButton(onClick = { finish() }) {
                             Icon(
                                 imageVector = Icons.Filled.KeyboardArrowLeft,
                                 contentDescription = "Localized description"

@@ -66,6 +66,7 @@ dependencies {
     implementation(platform(libs.compose.bom))
     implementation(libs.junit)
     implementation(libs.room.ktx)
+    implementation(libs.androidx.runtime.livedata)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation(platform(libs.compose.bom))

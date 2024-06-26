@@ -11,7 +11,7 @@ interface DiaryDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(diary: DiaryEntity)
 
-    @Query("SELECT * FROM diary")
+    @Query("SELECT * FROM diary ORDER BY create_date DESC")
     suspend fun getAll(): List<DiaryEntity>
 
     @Query("SELECT * FROM diary WHERE id = :id")

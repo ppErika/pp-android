@@ -3,15 +3,19 @@ package com.pp.community.viewmodel.main
 import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.pp.domain.model.post.GetPostsRequest
 import com.pp.domain.model.post.PostModel
+import com.pp.domain.model.room.DiaryModel
 import com.pp.domain.model.token.OauthTokenRequest
 import com.pp.domain.model.token.OauthTokenResponse
 import com.pp.domain.model.token.RevokeTokenRequest
 import com.pp.domain.usecase.datastore.DoLogoutUseCase
 import com.pp.domain.usecase.datastore.GetAccessTokenUseCase
 import com.pp.domain.usecase.datastore.SetAccessTokenUseCase
+import com.pp.domain.usecase.mydiary.GetAllMyDiaryUseCase
 import com.pp.domain.usecase.post.GetPostsUseCase
 import com.pp.domain.usecase.token.OauthTokenUseCase
 import com.pp.domain.usecase.token.RevokeTokenUseCase
@@ -24,6 +28,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
 import javax.inject.Inject
 
 @HiltViewModel
@@ -35,7 +40,8 @@ class MainViewModel @Inject constructor(
     private val getPostsUseCase: GetPostsUseCase,
     private val revokeTokenUseCase: RevokeTokenUseCase,
     private val doLogoutUseCase: DoLogoutUseCase,
-    private val deleteUserUseCase: DeleteUserUseCase
+    private val deleteUserUseCase: DeleteUserUseCase,
+    private val getAllMyDiaryUseCase: GetAllMyDiaryUseCase,
 ) : BaseViewModel() {
     // 공통
     var appBarTitle = mutableStateOf("")
@@ -59,6 +65,10 @@ class MainViewModel @Inject constructor(
 
     private var lastId: Int? = null
     private var kakaoIdToken: String = ""
+
+    // 나의 일기
+    private val _postList = MutableLiveData<List<PostModel>>()
+    val postList: LiveData<List<PostModel>> get() = _postList
 
     // 탈퇴
     private val _deleteResult = SingleFlowEvent<Boolean>()
@@ -133,6 +143,34 @@ class MainViewModel @Inject constructor(
     }
     fun getKakaoIdToken(): String{
         return kakaoIdToken
+    }
+
+    /**
+     * 나의 일기
+     */
+    fun fetchMyDiaryList() {
+        viewModelScope.launch {
+            val response = getAllMyDiaryUseCase.execute()
+            val posts = response.map { diary ->
+                Log.d("Erika_Log", "response: ${diary.title}")
+                val thumbnailUrl = diary.images?.firstOrNull()?.let { byteArrayToBase64(it) } ?: ""
+                val dateFormat = SimpleDateFormat("yyyy-MM-dd") // 원하는 날짜 형식으로 지정
+                val formattedDate = dateFormat.format(diary.createDate)
+
+                PostModel(
+                    id = diary.id,
+                    thumbnailUrl = thumbnailUrl,
+                    title = diary.title,
+                    createDate = formattedDate
+                )
+            }
+            Log.d("Erika_Log", "posts: ${posts}")
+            _postList.postValue(posts)
+        }
+    }
+
+    fun byteArrayToBase64(byteArray: ByteArray): String {
+        return android.util.Base64.encodeToString(byteArray, android.util.Base64.DEFAULT)
     }
 
     /**
