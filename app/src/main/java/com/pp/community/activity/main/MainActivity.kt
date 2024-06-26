@@ -19,7 +19,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -55,6 +57,7 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class MainActivity : BaseActivity<MainViewModel>() {
     private lateinit var navController: NavController
+    private var shouldRerender by mutableStateOf(false)
     override val viewModel: MainViewModel by viewModels()
     override fun observerViewModel() {
         mViewModel.run {
@@ -72,6 +75,8 @@ class MainActivity : BaseActivity<MainViewModel>() {
 
     @Composable
     override fun ComposeUi() {
+        val renderTrigger = remember { shouldRerender } // 상태 변수를 관찰하여 UI 재구성 트리거
+
         navController = rememberNavController()
         val appBarTitle = remember {
             mViewModel.appBarTitle
@@ -93,6 +98,11 @@ class MainActivity : BaseActivity<MainViewModel>() {
             }
             mViewModel.fetchMyDiaryList()
         }
+
+        LaunchedEffect(key1 = shouldRerender) {
+            mViewModel.fetchMyDiaryList()
+        }
+
         Column(Modifier.fillMaxSize()) {
             CommonCompose.CommonAppBarUI(title = appBarTitle, isBackPressed = false) {}
             NavHost(
@@ -195,6 +205,11 @@ class MainActivity : BaseActivity<MainViewModel>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        shouldRerender = !shouldRerender // 상태 값을 변경하여 Compose UI를 재렌더링
     }
 
     private fun initData() {
