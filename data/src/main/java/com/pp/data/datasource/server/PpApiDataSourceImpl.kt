@@ -16,6 +16,7 @@ import com.pp.domain.model.post.UploadPostRequest
 import com.pp.domain.model.token.OauthTokenRequest
 import com.pp.domain.model.token.OauthTokenResponse
 import com.pp.domain.model.token.RevokeTokenRequest
+import com.pp.domain.model.users.GetUserProfileResponse
 import com.pp.domain.model.users.UserRegisteredResponse
 import com.pp.domain.utils.RemoteError
 import okhttp3.RequestBody
@@ -144,6 +145,17 @@ class PpApiDataSourceImpl @Inject constructor(
     override suspend fun uploadFile(remoteError: RemoteError, url: String, file: RequestBody): String? {
         return safeApiCallNoContext(remoteError) {
             s3Api.uploadFile(url,file)
+        }
+    }
+
+    override suspend fun getUserProfile(
+        remoteError: RemoteError,
+        userId: Int
+    ): GetUserProfileResponse? {
+        return safeApiCallData(remoteError){
+            ppAuthenticationApi.getUserProfile(
+                userId = userId
+            )
         }
     }
 

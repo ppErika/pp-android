@@ -32,6 +32,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.kakao.sdk.user.UserApiClient
 import com.pp.community.R
+import com.pp.community.activity.ProfileActivity
 import com.pp.community.activity.UploadDiaryActivity
 import com.pp.community.activity.comment.CommentActivity
 import com.pp.community.activity.main.route.MainNav
@@ -44,6 +45,7 @@ import com.pp.community.ui.CommonCompose
 import com.pp.community.ui.theme.color_main
 import com.pp.community.ui.theme.color_white
 import com.pp.community.viewmodel.main.MainViewModel
+import com.pp.domain.model.users.GetUserProfileResponse
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -78,12 +80,16 @@ class MainActivity : BaseActivity<MainViewModel>() {
         val communityPostList = remember {
             mViewModel.communityPostList
         }
+        val profileInfo = remember{
+            mViewModel.profileInfo
+        }.value
         val packageInfo =
             applicationContext.packageManager.getPackageInfo(applicationContext.packageName, 0)
 
         LaunchedEffect(key1 = isLogin) {
             if (isLogin) {
                 mViewModel.getPostList()
+                mViewModel.getUserProfile()
             }
         }
         Column(Modifier.fillMaxSize()) {
@@ -132,12 +138,13 @@ class MainActivity : BaseActivity<MainViewModel>() {
                     mViewModel.setAppBarTitle(MainNav.Setting.name)
                     SettingScreen(
                         isLogin = isLogin,
+                        profileInfo = profileInfo,
                         version = packageInfo.versionName ?: "Unknown"
                     ) {
                         when (it) {
                             "logout" -> mViewModel.logout()
+                            "profile" -> moveProfileActivity(profileInfo)
                         }
-
                     }
                 }
             }
@@ -219,6 +226,12 @@ class MainActivity : BaseActivity<MainViewModel>() {
     private fun moveUploadActivity(type: String) {
         val intent = Intent(this@MainActivity, UploadDiaryActivity::class.java)
         intent.putExtra("type", type)
+        startActivity(intent)
+    }
+    private fun moveProfileActivity(profileInfo: GetUserProfileResponse){
+        val intent = Intent(this@MainActivity, ProfileActivity::class.java).apply{
+            putExtra("profileInfo",profileInfo)
+        }
         startActivity(intent)
     }
 }

@@ -8,6 +8,7 @@ import com.pp.domain.model.post.GetPostsResponse
 import com.pp.domain.model.post.GetPreSignedUrlRequest
 import com.pp.domain.model.post.GetPreSignedUrlResponse
 import com.pp.domain.model.post.UploadPostRequest
+import com.pp.domain.model.users.GetUserProfileResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -45,4 +46,8 @@ interface PpAuthenticationApi {
     suspend fun reportComment(
         @Path("commentId") commentId: Int
     ): Response<ApiDataResponse<CommonResponse?>>
+    @GET("api/v1/users/{userId}/profiles")
+    suspend fun getUserProfile(
+        @Path("userId") userId: Int
+    ): Response<ApiDataResponse<GetUserProfileResponse?>>
 }
