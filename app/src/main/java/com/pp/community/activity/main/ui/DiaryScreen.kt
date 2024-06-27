@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -33,6 +34,8 @@ import com.pp.community.ui.getRobotoFontFamily
 import com.pp.community.ui.module.InfiniteListHandler
 import com.pp.community.ui.theme.color_d9d9d9
 import com.pp.community.ui.theme.color_white
+import com.pp.community.utils.ConvertUtils.byteArrayToBitmap
+import com.pp.community.viewmodel.main.MainViewModel
 
 @Composable
 fun DiaryScreen(
@@ -115,17 +118,25 @@ fun DiaryItemUI(
                 ),
             contentAlignment = Alignment.Center
         ) {
-            GlideImage(
-                model = post.thumbnailUrl,
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
-            ) {
-                it.error(R.drawable.img_empty)
-                    .placeholder(R.drawable.img_empty)
-                    .load(post.thumbnailUrl)
+            if (post.thumbnailUrl.isNotEmpty()) {
+                val byteArray = android.util.Base64.decode(post.thumbnailUrl, android.util.Base64.DEFAULT)
+                val bitmap = byteArrayToBitmap(byteArray)
+                Image(
+                    bitmap = bitmap.asImageBitmap(),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
+                )
+            } else {
+                Image(
+                    painter = painterResource(id = R.drawable.img_empty),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
+                )
             }
         }
         Text(

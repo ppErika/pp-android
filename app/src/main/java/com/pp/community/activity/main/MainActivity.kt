@@ -17,13 +17,18 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -49,10 +54,12 @@ import com.pp.domain.model.users.GetUserProfileResponse
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : BaseActivity<MainViewModel>() {
     private lateinit var navController: NavController
+    private var shouldRerender by mutableStateOf(false)
     override val viewModel: MainViewModel by viewModels()
     override fun observerViewModel() {
         mViewModel.run {
@@ -70,6 +77,8 @@ class MainActivity : BaseActivity<MainViewModel>() {
 
     @Composable
     override fun ComposeUi() {
+        val renderTrigger = remember { shouldRerender } // 상태 변수를 관찰하여 UI 재구성 트리거
+
         navController = rememberNavController()
         val appBarTitle = remember {
             mViewModel.appBarTitle
@@ -83,6 +92,8 @@ class MainActivity : BaseActivity<MainViewModel>() {
         val profileInfo = remember{
             mViewModel.profileInfo
         }.value
+        val postList by mViewModel.postList.observeAsState(emptyList())
+
         val packageInfo =
             applicationContext.packageManager.getPackageInfo(applicationContext.packageName, 0)
 
@@ -91,7 +102,13 @@ class MainActivity : BaseActivity<MainViewModel>() {
                 mViewModel.getPostList()
                 mViewModel.getUserProfile()
             }
+            mViewModel.fetchMyDiaryList()
         }
+
+        LaunchedEffect(key1 = shouldRerender) {
+            mViewModel.fetchMyDiaryList()
+        }
+
         Column(Modifier.fillMaxSize()) {
             CommonCompose.CommonAppBarUI(title = appBarTitle, isBackPressed = false) {}
             NavHost(
@@ -103,14 +120,15 @@ class MainActivity : BaseActivity<MainViewModel>() {
                 composable(route = MainNav.MyDiary.name) {
                     mViewModel.setAppBarTitle(MainNav.MyDiary.name)
                     DiaryScreen(
-                        communityPostList = emptyList(),
+                        communityPostList = postList,
                         onClickItemEvent = {},
                         onClickUploadEvent = {
                             moveUploadActivity(MainNav.MyDiary.name)
                         },
-                        loadEvent = {}
+                        loadEvent = { postList }
                     )
                 }
+
                 // 커뮤니티
                 composable(route = MainNav.Community.name) {
                     mViewModel.setAppBarTitle(MainNav.Community.name)
@@ -194,6 +212,11 @@ class MainActivity : BaseActivity<MainViewModel>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        shouldRerender = !shouldRerender // 상태 값을 변경하여 Compose UI를 재렌더링
     }
 
     private fun initData() {
