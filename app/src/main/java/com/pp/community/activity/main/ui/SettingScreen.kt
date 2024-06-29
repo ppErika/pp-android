@@ -60,7 +60,7 @@ fun SettingScreen(
     Column(
         modifier = Modifier.padding(19.dp)
     ) {
-        ProfileUI(profileInfo){
+        ProfileUI("프로필 보기", profileInfo){
             onClick("profile")
         }
         LazyColumn(
@@ -129,7 +129,7 @@ fun UserSettingItemUI(title: String, onClick: () -> Unit) {
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun ProfileUI(profileInfo: GetUserProfileResponse,onClick: () -> Unit){
+fun ProfileUI(text: String, profileInfo: GetUserProfileResponse,onClick: () -> Unit){
     Row(
         verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
     ) {
@@ -154,7 +154,7 @@ fun ProfileUI(profileInfo: GetUserProfileResponse,onClick: () -> Unit){
             ),
             shape = RoundedCornerShape(5.dp)
         ) {
-            Text(text = "프로필 보기")
+            Text(text = text)
         }
     }
 

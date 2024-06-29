@@ -57,7 +57,7 @@
             android:exported="true"
             android:theme="@style/Theme.PP">
         </activity>
-        <activity android:name=".activity.ProfileActivity"
+        <activity android:name=".activity.profile.ProfileActivity"
             android:exported="true"
             android:theme="@style/Theme.PP">
         </activity>
