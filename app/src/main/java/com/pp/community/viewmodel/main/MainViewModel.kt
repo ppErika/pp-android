@@ -167,6 +167,7 @@ class MainViewModel @Inject constructor(
                 val formattedDate = dateFormat.format(diary.createDate)
 
                 PostModel(
+                    type = "DIARY",
                     id = diary.id,
                     thumbnailUrl = thumbnailUrl,
                     title = diary.title,
@@ -203,7 +204,9 @@ class MainViewModel @Inject constructor(
                         communityPostList.clear()
 
                     }
-                    communityPostList.addAll(it)
+                    communityPostList.addAll(it.apply{
+                        this.map{post -> post.type = "COMMUNITY"}
+                    })
                     if(it.size==20){
                         lastId = it.last().id
                     }else{

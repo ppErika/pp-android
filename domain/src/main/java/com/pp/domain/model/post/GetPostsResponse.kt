@@ -7,8 +7,9 @@ data class GetPostsResponse(
 )
 
 data class PostModel(
+    var type: String = "",
     var id: Int = 0,
-    var thumbnailUrl: String = "",
+    var thumbnailUrl: String? = "",
     var title: String = "",
     var createDate: String = ""
 ): Serializable
