@@ -207,8 +207,8 @@ class MainActivity : BaseActivity<MainViewModel>() {
         super.onCreate(savedInstanceState)
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onRestart() {
+        super.onRestart()
         shouldRerender = !shouldRerender // 상태 값을 변경하여 Compose UI를 재렌더링
     }
 
