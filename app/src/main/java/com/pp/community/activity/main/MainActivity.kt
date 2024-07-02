@@ -28,7 +28,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -44,16 +43,17 @@ import com.pp.community.activity.main.route.MainNav
 import com.pp.community.activity.main.ui.DiaryScreen
 import com.pp.community.activity.main.ui.LoginScreen
 import com.pp.community.activity.main.ui.SettingScreen
+import com.pp.community.activity.profile.ProfileActivity
 import com.pp.community.activity.terms.TermsOfUseActivity
 import com.pp.community.base.BaseActivity
 import com.pp.community.ui.CommonCompose
 import com.pp.community.ui.theme.color_main
 import com.pp.community.ui.theme.color_white
 import com.pp.community.viewmodel.main.MainViewModel
+import com.pp.domain.model.users.GetUserProfileResponse
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : BaseActivity<MainViewModel>() {
@@ -88,6 +88,9 @@ class MainActivity : BaseActivity<MainViewModel>() {
         val communityPostList = remember {
             mViewModel.communityPostList
         }
+        val profileInfo = remember{
+            mViewModel.profileInfo
+        }.value
         val postList by mViewModel.postList.observeAsState(emptyList())
 
         val packageInfo =
@@ -96,6 +99,7 @@ class MainActivity : BaseActivity<MainViewModel>() {
         LaunchedEffect(key1 = isLogin) {
             if (isLogin) {
                 mViewModel.getPostList()
+                mViewModel.getUserProfile()
             }
             mViewModel.fetchMyDiaryList()
         }
@@ -152,12 +156,13 @@ class MainActivity : BaseActivity<MainViewModel>() {
                     mViewModel.setAppBarTitle(MainNav.Setting.name)
                     SettingScreen(
                         isLogin = isLogin,
+                        profileInfo = profileInfo,
                         version = packageInfo.versionName ?: "Unknown"
                     ) {
                         when (it) {
                             "logout" -> mViewModel.logout()
+                            "profile" -> moveProfileActivity(profileInfo)
                         }
-
                     }
                 }
             }
@@ -246,7 +251,11 @@ class MainActivity : BaseActivity<MainViewModel>() {
         intent.putExtra("type", type)
         startActivity(intent)
     }
-
+    private fun moveProfileActivity(profileInfo: GetUserProfileResponse) {
+        val intent = Intent(this@MainActivity, ProfileActivity::class.java).apply {
+            putExtra("profileInfo", profileInfo)
+        }
+    }
     private fun moveDetailActivity(postId: Int) {
         val intent = Intent(this@MainActivity, DiaryDetailsActivity::class.java)
         intent.putExtra("postId", postId)

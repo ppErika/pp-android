@@ -58,6 +58,7 @@ import coil.compose.rememberImagePainter
 import com.pp.community.R
 import com.pp.community.activity.main.route.MainNav
 import com.pp.community.base.BaseActivity
+import com.pp.community.ui.theme.color_f3f3f3
 import com.pp.community.ui.theme.color_main
 import com.pp.community.ui.theme.color_white
 import com.pp.community.utils.FileUtils
@@ -151,7 +152,7 @@ class UploadDiaryActivity : BaseActivity<UploadDiaryViewModel>() {
                             modifier = Modifier
                                 .size(65.dp)
                                 .clip(RoundedCornerShape(5.dp))
-                                .background(colorResource(id = R.color.background_upload_image)),
+                                .background(color_f3f3f3),
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_camera),

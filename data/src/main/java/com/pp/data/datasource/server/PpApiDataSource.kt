@@ -12,6 +12,8 @@ import com.pp.domain.model.post.UploadPostRequest
 import com.pp.domain.model.token.OauthTokenRequest
 import com.pp.domain.model.token.OauthTokenResponse
 import com.pp.domain.model.token.RevokeTokenRequest
+import com.pp.domain.model.users.GetUserProfileResponse
+import com.pp.domain.model.users.UpdateUserProfileRequest
 import com.pp.domain.model.users.UserRegisteredResponse
 import com.pp.domain.utils.RemoteError
 import okhttp3.RequestBody
@@ -63,5 +65,14 @@ interface PpApiDataSource {
         remoteError: RemoteError,
         url: String,
         file: RequestBody
+    ): String?
+    suspend fun getUserProfile(
+        remoteError: RemoteError,
+        userId: Int
+    ): GetUserProfileResponse?
+    suspend fun updateUserProfile(
+        remoteError: RemoteError,
+        userId: Int,
+        updateUserProfileRequest: UpdateUserProfileRequest
     ): String?
 }

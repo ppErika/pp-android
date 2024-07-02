@@ -27,15 +27,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.pp.domain.model.post.PostModel
 import com.pp.community.R
 import com.pp.community.ui.CustomModifier.removeEffectClickable
 import com.pp.community.ui.getRobotoFontFamily
 import com.pp.community.ui.module.InfiniteListHandler
 import com.pp.community.ui.theme.color_d9d9d9
 import com.pp.community.ui.theme.color_white
-import com.pp.community.utils.ConvertUtils.byteArrayToBitmap
-import com.pp.community.viewmodel.main.MainViewModel
+import com.pp.community.utils.ConvertUtils
+import com.pp.domain.model.post.PostModel
 
 @Composable
 fun DiaryScreen(
@@ -118,17 +117,36 @@ fun DiaryItemUI(
                 ),
             contentAlignment = Alignment.Center
         ) {
-            if (post.thumbnailUrl.isNotEmpty()) {
-                val byteArray = android.util.Base64.decode(post.thumbnailUrl, android.util.Base64.DEFAULT)
-                val bitmap = byteArrayToBitmap(byteArray)
-                Image(
-                    bitmap = bitmap.asImageBitmap(),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
-                )
+            if (post.thumbnailUrl.isNullOrEmpty().not()) {
+                when(post.type){
+                    "COMMUNITY" -> {
+                        GlideImage(
+                            model = post.thumbnailUrl,
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
+                        ) {
+                            it.error(R.drawable.img_empty)
+                                .placeholder(R.drawable.img_empty)
+                                .load(post.thumbnailUrl)
+                        }
+                    }
+                    "DIARY" -> {
+                        val byteArray = android.util.Base64.decode(post.thumbnailUrl, android.util.Base64.DEFAULT)
+                        val bitmap = ConvertUtils.byteArrayToBitmap(byteArray)
+                        Image(
+                            bitmap = bitmap.asImageBitmap(),
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
+                        )
+                    }
+                }
+
             } else {
                 Image(
                     painter = painterResource(id = R.drawable.img_empty),

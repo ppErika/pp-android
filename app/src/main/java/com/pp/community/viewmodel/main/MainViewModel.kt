@@ -6,12 +6,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.pp.community.base.BaseViewModel
+import com.pp.community.utils.DecodeJwtUtil
+import com.pp.community.widget.SingleFlowEvent
 import com.pp.domain.model.post.GetPostsRequest
 import com.pp.domain.model.post.PostModel
 import com.pp.domain.model.room.DiaryModel
 import com.pp.domain.model.token.OauthTokenRequest
 import com.pp.domain.model.token.OauthTokenResponse
 import com.pp.domain.model.token.RevokeTokenRequest
+import com.pp.domain.model.users.GetUserProfileResponse
 import com.pp.domain.usecase.datastore.DoLogoutUseCase
 import com.pp.domain.usecase.datastore.GetAccessTokenUseCase
 import com.pp.domain.usecase.datastore.SetAccessTokenUseCase
@@ -20,9 +24,8 @@ import com.pp.domain.usecase.post.GetPostsUseCase
 import com.pp.domain.usecase.token.OauthTokenUseCase
 import com.pp.domain.usecase.token.RevokeTokenUseCase
 import com.pp.domain.usecase.users.DeleteUserUseCase
+import com.pp.domain.usecase.users.GetUserProfileUseCase
 import com.pp.domain.usecase.users.UserRegisteredUseCase
-import com.pp.community.base.BaseViewModel
-import com.pp.community.widget.SingleFlowEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -41,6 +44,8 @@ class MainViewModel @Inject constructor(
     private val revokeTokenUseCase: RevokeTokenUseCase,
     private val doLogoutUseCase: DoLogoutUseCase,
     private val deleteUserUseCase: DeleteUserUseCase,
+    private val getUserProfileUseCase: GetUserProfileUseCase,
+    private val decodeJwtUtil: DecodeJwtUtil,
     private val getAllMyDiaryUseCase: GetAllMyDiaryUseCase,
 ) : BaseViewModel() {
     // 공통
@@ -73,6 +78,10 @@ class MainViewModel @Inject constructor(
     // 탈퇴
     private val _deleteResult = SingleFlowEvent<Boolean>()
     val deleteResult = _deleteResult.flow
+
+    // 프로필
+    var profileInfo = mutableStateOf(GetUserProfileResponse())
+        private set
 
     /**
      * 로그인
@@ -158,6 +167,7 @@ class MainViewModel @Inject constructor(
                 val formattedDate = dateFormat.format(diary.createDate)
 
                 PostModel(
+                    type = "DIARY",
                     id = diary.id,
                     thumbnailUrl = thumbnailUrl,
                     title = diary.title,
@@ -194,7 +204,9 @@ class MainViewModel @Inject constructor(
                         communityPostList.clear()
 
                     }
-                    communityPostList.addAll(it)
+                    communityPostList.addAll(it.apply{
+                        this.map{post -> post.type = "COMMUNITY"}
+                    })
                     if(it.size==20){
                         lastId = it.last().id
                     }else{
@@ -224,8 +236,9 @@ class MainViewModel @Inject constructor(
     /**
      * 탈퇴하기
      */
-    fun deleteUser(userId: String){
+    fun deleteUser(){
         viewModelScope.launch {
+            val userId = decodeJwtUtil.getUserId(token = getAccessToken2()?:"")
             val response = deleteUserUseCase.execute(this@MainViewModel,userId)
             response?.let{
                 // TODO TEST
@@ -235,6 +248,18 @@ class MainViewModel @Inject constructor(
 
             }
         }
-
+    }
+    /**
+     * 유저 프로필 조회
+     */
+    fun getUserProfile(){
+        viewModelScope.launch {
+            val userId = decodeJwtUtil.getUserId(token = getAccessToken2()?:"").toInt()
+            val response = getUserProfileUseCase.execute(this@MainViewModel,userId)
+            response?.let{
+                profileInfo.value = it
+                Log.d("EJ_LOG","getUserProfile : $it")
+            }
+        }
     }
 }
