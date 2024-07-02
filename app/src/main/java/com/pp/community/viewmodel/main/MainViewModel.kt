@@ -161,7 +161,6 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             val response = getAllMyDiaryUseCase.execute()
             val posts = response.map { diary ->
-                Log.d("Erika_Log", "response: ${diary.title}")
                 val thumbnailUrl = diary.images?.firstOrNull()?.let { byteArrayToBase64(it) } ?: ""
                 val dateFormat = SimpleDateFormat("yyyy-MM-dd") // 원하는 날짜 형식으로 지정
                 val formattedDate = dateFormat.format(diary.createDate)
@@ -174,7 +173,6 @@ class MainViewModel @Inject constructor(
                     createDate = formattedDate
                 )
             }
-            Log.d("Erika_Log", "posts: ${posts}")
             _postList.postValue(posts)
         }
     }
