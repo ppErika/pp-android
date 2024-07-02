@@ -7,6 +7,7 @@ import androidx.core.net.toUri
 import androidx.lifecycle.viewModelScope
 import com.pp.community.base.BaseViewModel
 import com.pp.community.utils.FileUtils
+import com.pp.community.widget.SingleFlowEvent
 import com.pp.domain.model.post.GetPreSignedUrlRequest
 import com.pp.domain.model.post.PreSignedUploadUrl
 import com.pp.domain.model.users.GetUserProfileResponse
@@ -32,6 +33,9 @@ class ProfileViewModel @Inject constructor(
         private set
     var inputNickname = mutableStateOf("")
     var selectedProfileImage = mutableStateOf("")
+    private val _profileUpdateSuccessEvent = SingleFlowEvent<String>()
+    val profileUpdateSuccessEvent = _profileUpdateSuccessEvent.flow
+
     fun setProfileInfo(profile: GetUserProfileResponse) {
         profileInfo.value = profile
         inputNickname.value = profile.nickname
@@ -102,10 +106,9 @@ class ProfileViewModel @Inject constructor(
                         )
                     response3?.let {
                         Log.d("EJ_LOG", "updateProfile : $it")
+                        _profileUpdateSuccessEvent.emit("success")
                     }
                 }
-
-
             }
         }
     }

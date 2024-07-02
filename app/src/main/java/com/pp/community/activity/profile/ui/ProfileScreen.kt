@@ -18,12 +18,12 @@ import com.pp.domain.model.users.GetUserProfileResponse
 fun ProfileScreen(
     profileInfo: GetUserProfileResponse,
     inputNickname: MutableState<String>,
-    selectedProfileImage : MutableState<String>,
+    selectedProfileImage: MutableState<String>,
     onClickModify: () -> Unit,
     onClickDetail: () -> Unit,
     onclickProfileImage: () -> Unit
 ) {
-    var isShowBottomSheet by remember {mutableStateOf(false)}
+    var isShowBottomSheet by remember { mutableStateOf(false) }
     Column(modifier = Modifier.padding(10.dp)) {
         ProfileUI("프로필 수정", profileInfo) {
             isShowBottomSheet = true
@@ -32,15 +32,18 @@ fun ProfileScreen(
             postCount = profileInfo.postCount,
             thumbsUpCount = profileInfo.thumbsUpCount
         )
-        DiaryListUI(profileInfo.posts, {onClickDetail()}, {})
+        DiaryListUI(profileInfo.posts, { onClickDetail() }, {})
     }
     ProfileModifyBottomSheetUI(
         isShow = isShowBottomSheet,
         selectedProfileImage = selectedProfileImage,
         inputNickname = inputNickname,
         onclickProfileImage = { onclickProfileImage() },
-        onDismiss = {isShowBottomSheet = false},
-        onModifyEvent = {onClickModify()}
+        onDismiss = { isShowBottomSheet = false },
+        onModifyEvent = {
+            onClickModify()
+            isShowBottomSheet = false
+        }
     )
 
 }
