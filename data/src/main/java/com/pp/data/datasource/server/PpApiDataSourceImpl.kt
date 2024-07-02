@@ -17,6 +17,7 @@ import com.pp.domain.model.token.OauthTokenRequest
 import com.pp.domain.model.token.OauthTokenResponse
 import com.pp.domain.model.token.RevokeTokenRequest
 import com.pp.domain.model.users.GetUserProfileResponse
+import com.pp.domain.model.users.UpdateUserProfileRequest
 import com.pp.domain.model.users.UserRegisteredResponse
 import com.pp.domain.utils.RemoteError
 import okhttp3.RequestBody
@@ -159,4 +160,16 @@ class PpApiDataSourceImpl @Inject constructor(
         }
     }
 
+    override suspend fun updateUserProfile(
+        remoteError: RemoteError,
+        userId: Int,
+        updateUserProfileRequest: UpdateUserProfileRequest
+    ): String? {
+        return safeApiCallNoContext(remoteError) {
+            ppAuthenticationApi.updateUserProfile(
+                userId = userId,
+                updateUserProfileRequest = updateUserProfileRequest
+            )
+        }
+    }
 }

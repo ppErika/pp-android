@@ -14,6 +14,7 @@ import com.pp.domain.model.token.OauthTokenRequest
 import com.pp.domain.model.token.OauthTokenResponse
 import com.pp.domain.model.token.RevokeTokenRequest
 import com.pp.domain.model.users.GetUserProfileResponse
+import com.pp.domain.model.users.UpdateUserProfileRequest
 import com.pp.domain.model.users.UserRegisteredResponse
 import com.pp.domain.repository.PpApiRepository
 import com.pp.domain.utils.RemoteError
@@ -101,5 +102,13 @@ class PpApiRepositoryImpl @Inject constructor(
         userId: Int
     ): GetUserProfileResponse? {
         return ppApiDataSource.getUserProfile(remoteError, userId)
+    }
+
+    override suspend fun updateUserProfile(
+        remoteError: RemoteError,
+        userId: Int,
+        updateUserProfileResponse: UpdateUserProfileRequest
+    ): String? {
+        return ppApiDataSource.updateUserProfile(remoteError, userId, updateUserProfileResponse)
     }
 }

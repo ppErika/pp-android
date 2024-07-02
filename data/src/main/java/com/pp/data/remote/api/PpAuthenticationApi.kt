@@ -9,9 +9,11 @@ import com.pp.domain.model.post.GetPreSignedUrlRequest
 import com.pp.domain.model.post.GetPreSignedUrlResponse
 import com.pp.domain.model.post.UploadPostRequest
 import com.pp.domain.model.users.GetUserProfileResponse
+import com.pp.domain.model.users.UpdateUserProfileRequest
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -50,4 +52,9 @@ interface PpAuthenticationApi {
     suspend fun getUserProfile(
         @Path("userId") userId: Int
     ): Response<ApiDataResponse<GetUserProfileResponse?>>
+    @PATCH("api/v1/users/{userId}")
+    suspend fun updateUserProfile(
+        @Path("userId") userId: Int,
+        @Body updateUserProfileRequest: UpdateUserProfileRequest
+    ): Response<ApiDataResponse<CommonResponse?>>
 }

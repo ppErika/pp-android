@@ -117,7 +117,6 @@ fun DiaryItemUI(
                 ),
             contentAlignment = Alignment.Center
         ) {
-            Log.d("EJ_LOG","post.thumbnailUrl : ${post.thumbnailUrl}")
             if (post.thumbnailUrl.isNullOrEmpty().not()) {
                 when(post.type){
                     "COMMUNITY" -> {
