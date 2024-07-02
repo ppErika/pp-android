@@ -1,6 +1,7 @@
 package com.pp.community.activity
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -112,52 +113,56 @@ class DiaryDetailsActivity : BaseActivity<DiaryDetailsViewModel>() {
                         .padding(start = 16.dp, top = 66.dp, end = 16.dp, bottom = 16.dp),
                 ) {
                     postDetails?.let { post ->
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(258.dp)
-                                .background(
-                                    brush = Brush.horizontalGradient(listOf(Color.White, Color.White)),
-                                    RoundedCornerShape(10.dp),
-                                )
-                        ) {
-                            val pagerState = rememberPagerState(pageCount = { post.images?.size ?: 1 })
-
-                            HorizontalPager(
-                                state = pagerState,
-                                modifier = Modifier.fillMaxSize()
-                            ) { page ->
-                                Image(
-                                    modifier = Modifier
-                                        .height(258.dp)
-                                        .fillMaxWidth()
-                                        .background(
-                                            color = Color.LightGray,
-                                            shape = RoundedCornerShape(10.dp)
-                                        ),
-                                    painter = rememberImagePainter(post.images?.get(page)),
-                                    contentDescription = null,
-                                    contentScale = ContentScale.Crop
-                                )
-                            }
-
-                            Row(
-                                Modifier
-                                    .wrapContentHeight()
+                        if (!post.images.isNullOrEmpty()) {
+                            Box(
+                                modifier = Modifier
                                     .fillMaxWidth()
-                                    .align(Alignment.BottomCenter)
-                                    .padding(bottom = 8.dp),
-                                horizontalArrangement = Arrangement.Center
-                            ) {
-                                repeat(pagerState.pageCount) { iteration ->
-                                    val color = if (pagerState.currentPage == iteration) Color.DarkGray else Color.LightGray
-                                    Box(
-                                        modifier = Modifier
-                                            .padding(2.dp)
-                                            .clip(CircleShape)
-                                            .background(color)
-                                            .size(8.dp)
+                                    .height(258.dp)
+                                    .background(
+                                        color = Color.LightGray, // 기본 배경색 설정
+                                        shape = RoundedCornerShape(10.dp),
                                     )
+                            ) {
+                                val pagerState =
+                                    rememberPagerState(pageCount = { post.images?.size ?: 0 })
+
+                                HorizontalPager(
+                                    state = pagerState,
+                                    modifier = Modifier.fillMaxSize()
+                                ) { page ->
+                                    Image(
+                                        modifier = Modifier
+                                            .height(258.dp)
+                                            .fillMaxWidth()
+                                            .clip(RoundedCornerShape(10.dp))
+                                            .background(
+                                                color = Color.LightGray,
+                                            ),
+                                        painter = rememberImagePainter(post.images?.get(page)),
+                                        contentDescription = null,
+                                        contentScale = ContentScale.Crop,
+                                    )
+                                }
+
+                                Row(
+                                    Modifier
+                                        .wrapContentHeight()
+                                        .fillMaxWidth()
+                                        .align(Alignment.BottomCenter)
+                                        .padding(bottom = 8.dp),
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
+                                    repeat(pagerState.pageCount) { iteration ->
+                                        val color =
+                                            if (pagerState.currentPage == iteration) Color.DarkGray else Color.LightGray
+                                        Box(
+                                            modifier = Modifier
+                                                .padding(2.dp)
+                                                .clip(CircleShape)
+                                                .background(color)
+                                                .size(8.dp)
+                                        )
+                                    }
                                 }
                             }
                         }
