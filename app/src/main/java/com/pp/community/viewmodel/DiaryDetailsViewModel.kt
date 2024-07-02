@@ -24,7 +24,9 @@ class DiaryDetailsViewModel @Inject constructor(
         }
     }
 
-    fun deleteDiary() {
-        // TODO
+    fun deleteDiary(postId: Int) {
+        viewModelScope.launch {
+            roomRepository.deleteById(id = postId)
+        }
     }
 }

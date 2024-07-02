@@ -99,7 +99,11 @@ class DiaryDetailsActivity : BaseActivity<DiaryDetailsViewModel>() {
                         DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
                             DropdownMenuItem(
                                 text = { Text(text = stringResource(id = R.string.btn_delete)) },
-                                onClick = { viewModel.deleteDiary() }
+                                onClick = { if(postDetails?.id != null) {
+                                    viewModel.deleteDiary(postDetails!!.id)
+                                    showShortToast("삭제에 성공했습니다.")
+                                    finish()
+                                } }
                             )
                         }
                     },

@@ -27,4 +27,8 @@ class RoomRepositoryImpl @Inject constructor(
             diaryDao.getById(id)?.toModel()
         }
     }
+
+    override suspend fun deleteById(id: Int) {
+        diaryDao.deleteById(id)
+    }
 }
