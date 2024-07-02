@@ -1,6 +1,7 @@
 package com.pp.community.activity
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -33,6 +34,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,23 +45,28 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import coil.compose.rememberImagePainter
 import com.pp.community.R
 import com.pp.community.base.BaseActivity
 import com.pp.community.ui.getRobotoFontFamily
 import com.pp.community.ui.theme.color_ebebf4
+import com.pp.community.utils.ConvertUtils.dateToString
 import com.pp.community.viewmodel.DiaryDetailsViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class DiaryDetailsActivity : BaseActivity<DiaryDetailsViewModel>() {
     override val viewModel: DiaryDetailsViewModel by viewModels()
 
     override fun observerViewModel() {
-        TODO("Not yet implemented")
+        // ViewModel의 LiveData 또는 State를 관찰하여 UI를 업데이트합니다.
     }
 
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -67,16 +74,15 @@ class DiaryDetailsActivity : BaseActivity<DiaryDetailsViewModel>() {
     override fun ComposeUi() {
         val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
         var showMenu by remember { mutableStateOf(false) }
+        val postDetails by viewModel.postDetails.collectAsState()
 
         Scaffold(
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = {
                 CenterAlignedTopAppBar(
-                    title = {
-
-                    },
+                    title = { Text(text = postDetails?.title ?: "") },
                     navigationIcon = {
-                        IconButton(onClick = { /* do something */ }) {
+                        IconButton(onClick = { finish() }) {
                             Icon(
                                 imageVector = Icons.Filled.KeyboardArrowLeft,
                                 contentDescription = "Localized description"
@@ -92,10 +98,12 @@ class DiaryDetailsActivity : BaseActivity<DiaryDetailsViewModel>() {
                         }
                         DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
                             DropdownMenuItem(
-                                text = {
-                                    Text(text = stringResource(id = R.string.btn_delete))
-                                },
-                                onClick = { /*TODO*/ }
+                                text = { Text(text = stringResource(id = R.string.btn_delete)) },
+                                onClick = { if(postDetails?.id != null) {
+                                    viewModel.deleteDiary(postDetails!!.id)
+                                    showShortToast("삭제에 성공했습니다.")
+                                    finish()
+                                } }
                             )
                         }
                     },
@@ -107,104 +115,81 @@ class DiaryDetailsActivity : BaseActivity<DiaryDetailsViewModel>() {
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(start = 16.dp, top = 66.dp, end = 16.dp, bottom = 16.dp),
+                ) {
+                    postDetails?.let { post ->
+                        if (!post.images.isNullOrEmpty()) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(258.dp)
+                                    .background(
+                                        color = Color.LightGray, // 기본 배경색 설정
+                                        shape = RoundedCornerShape(10.dp),
+                                    )
+                            ) {
+                                val pagerState =
+                                    rememberPagerState(pageCount = { post.images?.size ?: 0 })
 
-                    ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(258.dp)
-                            .background(
-                                brush = Brush.horizontalGradient(listOf(Color.White, Color.White)),
-                                RoundedCornerShape(10.dp),
-                            )
-                    ) {
-                        val pagerState = rememberPagerState(pageCount = {
-                            3
-                        })
+                                HorizontalPager(
+                                    state = pagerState,
+                                    modifier = Modifier.fillMaxSize()
+                                ) { page ->
+                                    Image(
+                                        modifier = Modifier
+                                            .height(258.dp)
+                                            .fillMaxWidth()
+                                            .clip(RoundedCornerShape(10.dp))
+                                            .background(
+                                                color = Color.LightGray,
+                                            ),
+                                        painter = rememberImagePainter(post.images?.get(page)),
+                                        contentDescription = null,
+                                        contentScale = ContentScale.Crop,
+                                    )
+                                }
 
-                        HorizontalPager(
-                            state = pagerState,
-                            modifier = Modifier.fillMaxSize()
-                        ) { page ->
-                            when (page) {
-                                0 -> Image(
-                                    modifier = Modifier
-                                        .height(258.dp)
+                                Row(
+                                    Modifier
+                                        .wrapContentHeight()
                                         .fillMaxWidth()
-                                        .background(
-                                            color_ebebf4,
-                                            RoundedCornerShape(10.dp)
-                                        ),
-                                    painter = painterResource(id = R.drawable.ic_logo),
-                                    contentDescription = null
-                                )
-
-                                1 -> Image(
-                                    modifier = Modifier
-                                        .height(258.dp)
-                                        .fillMaxWidth()
-                                        .background(
-                                            color_ebebf4,
-                                            RoundedCornerShape(10.dp)
-                                        ),
-                                    painter = painterResource(id = R.drawable.ic_logo),
-                                    contentDescription = null
-                                )
-
-                                2 -> Image(
-                                    modifier = Modifier
-                                        .height(258.dp)
-                                        .fillMaxWidth()
-                                        .background(
-                                            color_ebebf4,
-                                            RoundedCornerShape(10.dp)
-                                        ),
-                                    painter = painterResource(id = R.drawable.ic_logo),
-                                    contentDescription = null
-                                )
+                                        .align(Alignment.BottomCenter)
+                                        .padding(bottom = 8.dp),
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
+                                    repeat(pagerState.pageCount) { iteration ->
+                                        val color =
+                                            if (pagerState.currentPage == iteration) Color.DarkGray else Color.LightGray
+                                        Box(
+                                            modifier = Modifier
+                                                .padding(2.dp)
+                                                .clip(CircleShape)
+                                                .background(color)
+                                                .size(8.dp)
+                                        )
+                                    }
+                                }
                             }
                         }
 
-                        Row(
-                            Modifier
-                                .wrapContentHeight()
-                                .fillMaxWidth()
-                                .align(Alignment.BottomCenter)
-                                .padding(bottom = 8.dp),
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            repeat(pagerState.pageCount) { iteration ->
-                                val color =
-                                    if (pagerState.currentPage == iteration) Color.DarkGray else Color.LightGray
-                                Box(
-                                    modifier = Modifier
-                                        .padding(2.dp)
-                                        .clip(CircleShape)
-                                        .background(color)
-                                        .size(8.dp)
-                                )
-                            }
-                        }
+                        Text(
+                            text = post.title,
+                            modifier = Modifier.padding(top = 25.dp),
+                            fontSize = 18.sp,
+                            fontFamily = getRobotoFontFamily()
+                        )
+                        Text(
+                            text = dateToString(post.createDate).toString(),
+                            modifier = Modifier.padding(top = 5.dp),
+                            fontSize = 12.sp,
+                            fontFamily = getRobotoFontFamily()
+                        )
+                        Text(
+                            text = post.contents,
+                            modifier = Modifier.padding(top = 20.dp),
+                            fontSize = 12.sp,
+                            fontFamily = getRobotoFontFamily()
+                        )
                     }
-
-                    Text(
-                        text = "바다 거북이 본 날",
-                        modifier = Modifier.padding(top = 25.dp),
-                        fontSize = 18.sp,
-                        fontFamily = getRobotoFontFamily()
-                    )
-                    Text(
-                        text = "0000.00.00.",
-                        modifier = Modifier.padding(top = 5.dp),
-                        fontSize = 12.sp,
-                        fontFamily = getRobotoFontFamily()
-                    )
-                    Text(
-                        text = "내용내용내용",
-                        modifier = Modifier.padding(top = 20.dp),
-                        fontSize = 12.sp,
-                        fontFamily = getRobotoFontFamily()
-                    )
                 }
             }
         )
@@ -217,7 +202,10 @@ class DiaryDetailsActivity : BaseActivity<DiaryDetailsViewModel>() {
     }
 
     override fun init() {
-
+        val postId = intent.getIntExtra("postId", -1)
+        if (postId != -1) {
+            viewModel.loadDiaryDetails(postId)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

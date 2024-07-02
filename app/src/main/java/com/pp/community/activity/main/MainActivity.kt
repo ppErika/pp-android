@@ -37,6 +37,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.kakao.sdk.user.UserApiClient
 import com.pp.community.R
+import com.pp.community.activity.DiaryDetailsActivity
 import com.pp.community.activity.UploadDiaryActivity
 import com.pp.community.activity.comment.CommentActivity
 import com.pp.community.activity.main.route.MainNav
@@ -115,7 +116,8 @@ class MainActivity : BaseActivity<MainViewModel>() {
                     mViewModel.setAppBarTitle(MainNav.MyDiary.name)
                     DiaryScreen(
                         communityPostList = postList,
-                        onClickItemEvent = {},
+                        onClickItemEvent = { postModel ->
+                            moveDetailActivity(postModel.id) },
                         onClickUploadEvent = {
                             moveUploadActivity(MainNav.MyDiary.name)
                         },
@@ -207,8 +209,8 @@ class MainActivity : BaseActivity<MainViewModel>() {
         super.onCreate(savedInstanceState)
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onRestart() {
+        super.onRestart()
         shouldRerender = !shouldRerender // 상태 값을 변경하여 Compose UI를 재렌더링
     }
 
@@ -242,6 +244,12 @@ class MainActivity : BaseActivity<MainViewModel>() {
     private fun moveUploadActivity(type: String) {
         val intent = Intent(this@MainActivity, UploadDiaryActivity::class.java)
         intent.putExtra("type", type)
+        startActivity(intent)
+    }
+
+    private fun moveDetailActivity(postId: Int) {
+        val intent = Intent(this@MainActivity, DiaryDetailsActivity::class.java)
+        intent.putExtra("postId", postId)
         startActivity(intent)
     }
 }

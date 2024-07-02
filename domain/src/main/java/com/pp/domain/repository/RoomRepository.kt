@@ -6,4 +6,5 @@ interface RoomRepository {
     suspend fun insert(diary: DiaryModel)
     suspend fun getAll(): List<DiaryModel>
     suspend fun getById(id: Int): DiaryModel?
+    suspend fun deleteById(id: Int)
 }
