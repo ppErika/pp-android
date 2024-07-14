@@ -1,5 +1,7 @@
 package com.pp.community.activity.terms
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Column
@@ -43,7 +45,13 @@ class TermsOfUseActivity : BaseActivity<MainViewModel>() {
             TermsOfUseScreen(
                 isSelectedTerms1 = isSelectedTerms1,
                 isSelectedTerms2 = isSelectedTerms2,
-                isSelectedAll = isSelectedAll
+                isSelectedAll = isSelectedAll,
+                onClickTerms = {
+                    when(it){
+                        "1"-> moveToWebSite("https://pp-api.kro.kr/pp-policy/privacy-policy.html")
+                        "2"-> moveToWebSite("https://pp-api.kro.kr/pp-policy/terms-and-condition.html")
+                    }
+                }
             ) {
                 mViewModel.getOauthToken()
                 finish()
@@ -64,6 +72,11 @@ class TermsOfUseActivity : BaseActivity<MainViewModel>() {
     private fun initData() {
         val idToken = intent.getStringExtra("idToken") ?: ""
         mViewModel.setKakaoIdToken(idToken)
+    }
+    private fun moveToWebSite(url: String){
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = Uri.parse(url)
+        startActivity(intent)
     }
 
 }
