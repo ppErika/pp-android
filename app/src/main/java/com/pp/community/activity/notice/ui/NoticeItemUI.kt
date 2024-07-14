@@ -3,8 +3,9 @@ package com.pp.community.activity.notice.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -27,9 +28,10 @@ fun NoticeItemUI(item: Notice,onClickEvent:(Notice)->Unit) {
         )
         Spacer(
             modifier = Modifier
+                .fillMaxWidth()
                 .padding(vertical = 10.dp)
+                .height(1.dp)
                 .background(color = color_bbbbbb)
-                .width(10.dp)
         )
     }
 }

@@ -13,6 +13,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.pp.community.activity.notice.route.NoticeNav
+import com.pp.community.activity.notice.ui.NoticeDetailScreen
 import com.pp.community.activity.notice.ui.NoticeScreen
 import com.pp.community.base.BaseActivity
 import com.pp.community.ui.CommonCompose
@@ -53,6 +54,15 @@ class NoticeActivity: BaseActivity<NoticeViewModel>() {
                     }
                 }
                 composable(NoticeNav.NoticeDetail.name){
+                    Log.d("EJ_LOG","noticeDetail ${it.arguments}")
+                    it.arguments?.let{bundle ->
+                        NoticeDetailScreen(
+                            title = bundle.getString("title")?:"",
+                            content = bundle.getString("content")?:"",
+                            createDate = bundle.getString("createDate")?:""
+                        )
+                    }
+
                 }
 
             }
@@ -70,7 +80,12 @@ class NoticeActivity: BaseActivity<NoticeViewModel>() {
         if (::navController.isInitialized) {
             navController.customNavigate(
                 route = destination,
-                args = Bundle(notice.id))
+                args = Bundle().apply {
+                    putString("title",notice.title)
+                    putString("content",notice.content)
+                    putString("createDate",notice.createDate)
+                }
+            )
         }
     }
 
