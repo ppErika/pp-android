@@ -256,14 +256,19 @@ class MainActivity : BaseActivity<MainViewModel>() {
         intent.putExtra("type", type)
         startActivity(intent)
     }
-    private fun moveProfileActivity(profileInfo: GetUserProfileResponse) {
+    private fun moveProfileActivity(profileInfo: GetUserProfileResponse?) {
         val intent = Intent(this@MainActivity, ProfileActivity::class.java).apply {
             putExtra("profileInfo", profileInfo)
         }
+        startActivity(intent)
     }
     private fun moveDetailActivity(postId: Int) {
         val intent = Intent(this@MainActivity, DiaryDetailsActivity::class.java)
         intent.putExtra("postId", postId)
+        startActivity(intent)
+    }
+    private fun moveNoticeActivity(){
+        val intent = Intent(this@MainActivity, NoticeActivity::class.java)
         startActivity(intent)
     }
     private fun moveToWebSite(url: String){
