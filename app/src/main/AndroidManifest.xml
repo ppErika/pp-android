@@ -65,6 +65,9 @@
             android:name=".activity.DiaryDetailsActivity"
             android:exported="true"
             android:theme="@style/Theme.PP" />
+        <activity android:name=".activity.notice.NoticeActivity"
+            android:exported="true"
+            android:theme="@style/Theme.PP"/>
     </application>
 
 </manifest>

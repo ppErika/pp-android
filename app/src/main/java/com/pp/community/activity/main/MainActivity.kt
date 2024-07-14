@@ -1,6 +1,7 @@
 package com.pp.community.activity.main
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
@@ -43,6 +44,7 @@ import com.pp.community.activity.main.route.MainNav
 import com.pp.community.activity.main.ui.DiaryScreen
 import com.pp.community.activity.main.ui.LoginScreen
 import com.pp.community.activity.main.ui.SettingScreen
+import com.pp.community.activity.notice.NoticeActivity
 import com.pp.community.activity.profile.ProfileActivity
 import com.pp.community.activity.terms.TermsOfUseActivity
 import com.pp.community.base.BaseActivity
@@ -162,6 +164,9 @@ class MainActivity : BaseActivity<MainViewModel>() {
                         when (it) {
                             "logout" -> mViewModel.logout()
                             "profile" -> moveProfileActivity(profileInfo)
+                            "notice" -> moveNoticeActivity()
+                            "terms1" -> moveToWebSite("https://pp-api.kro.kr/pp-policy/privacy-policy.html")
+                            "terms2" -> moveToWebSite("https://pp-api.kro.kr/pp-policy/terms-and-condition.html")
                         }
                     }
                 }
@@ -259,6 +264,11 @@ class MainActivity : BaseActivity<MainViewModel>() {
     private fun moveDetailActivity(postId: Int) {
         val intent = Intent(this@MainActivity, DiaryDetailsActivity::class.java)
         intent.putExtra("postId", postId)
+        startActivity(intent)
+    }
+    private fun moveToWebSite(url: String){
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = Uri.parse(url)
         startActivity(intent)
     }
 }

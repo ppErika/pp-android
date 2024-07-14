@@ -8,6 +8,8 @@ import com.pp.domain.model.comments.GetCommentsRequest
 import com.pp.domain.model.comments.GetCommentsResponse
 import com.pp.domain.model.comments.PostCommentRequest
 import com.pp.domain.model.common.CommonResponse
+import com.pp.domain.model.notice.GetNoticesRequest
+import com.pp.domain.model.notice.GetNoticesResponse
 import com.pp.domain.model.post.GetPostsRequest
 import com.pp.domain.model.post.GetPostsResponse
 import com.pp.domain.model.post.GetPreSignedUrlRequest
@@ -169,6 +171,18 @@ class PpApiDataSourceImpl @Inject constructor(
             ppAuthenticationApi.updateUserProfile(
                 userId = userId,
                 updateUserProfileRequest = updateUserProfileRequest
+            )
+        }
+    }
+
+    override suspend fun getNotices(
+        remoteError: RemoteError,
+        getNoticesRequest: GetNoticesRequest
+    ): GetNoticesResponse? {
+        return safeApiCallData(remoteError){
+            ppApi.getNotices(
+                limit = getNoticesRequest.limit,
+                lastId = getNoticesRequest.lastId
             )
         }
     }

@@ -1,14 +1,18 @@
 package com.pp.data.remote.api
 
+import com.pp.data.model.ApiDataResponse
 import com.pp.domain.model.common.CommonResponse
+import com.pp.domain.model.notice.GetNoticesResponse
 import com.pp.domain.model.token.OauthTokenResponse
 import com.pp.domain.model.users.UserRegisteredResponse
 import retrofit2.Response
 import retrofit2.http.DELETE
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
+import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface PpApi {
     @FormUrlEncoded
@@ -42,5 +46,11 @@ interface PpApi {
     suspend fun deleteUser(
         @Path("userId") client: String
     ) : Response<CommonResponse>
+
+    @GET("/api/v1/notices")
+    suspend fun getNotices(
+        @Query("limit") limit: Int,
+        @Query("lastId") lastId: Int?
+    ) : Response<ApiDataResponse<GetNoticesResponse>>
 
 }

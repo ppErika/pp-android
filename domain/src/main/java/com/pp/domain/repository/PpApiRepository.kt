@@ -4,6 +4,8 @@ import com.pp.domain.model.comments.GetCommentsRequest
 import com.pp.domain.model.comments.GetCommentsResponse
 import com.pp.domain.model.comments.PostCommentRequest
 import com.pp.domain.model.common.CommonResponse
+import com.pp.domain.model.notice.GetNoticesRequest
+import com.pp.domain.model.notice.GetNoticesResponse
 import com.pp.domain.model.post.GetPostsRequest
 import com.pp.domain.model.post.GetPostsResponse
 import com.pp.domain.model.post.GetPreSignedUrlRequest
@@ -75,4 +77,8 @@ interface PpApiRepository {
         userId: Int,
         updateUserProfileResponse: UpdateUserProfileRequest
     ) : String?
+    suspend fun getNotices(
+        remoteError: RemoteError,
+        getNoticesRequest: GetNoticesRequest
+    ): GetNoticesResponse?
 }
