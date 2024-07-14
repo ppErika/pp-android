@@ -240,7 +240,10 @@ class MainActivity : BaseActivity<MainViewModel>() {
 
     private fun moveNavigate(destination: String) {
         if (::navController.isInitialized) {
-            navController.navigate(destination)
+
+            navController.navigate(destination){
+                popUpTo(0)
+            }
         }
     }
 
