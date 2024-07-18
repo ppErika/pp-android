@@ -11,7 +11,6 @@ import com.pp.community.utils.DecodeJwtUtil
 import com.pp.community.widget.SingleFlowEvent
 import com.pp.domain.model.post.GetPostsRequest
 import com.pp.domain.model.post.PostModel
-import com.pp.domain.model.room.DiaryModel
 import com.pp.domain.model.token.OauthTokenRequest
 import com.pp.domain.model.token.OauthTokenResponse
 import com.pp.domain.model.token.RevokeTokenRequest
@@ -80,7 +79,7 @@ class MainViewModel @Inject constructor(
     val deleteResult = _deleteResult.flow
 
     // 프로필
-    var profileInfo = mutableStateOf(GetUserProfileResponse())
+    var profileInfo = mutableStateOf<GetUserProfileResponse?>(null)
         private set
 
     /**

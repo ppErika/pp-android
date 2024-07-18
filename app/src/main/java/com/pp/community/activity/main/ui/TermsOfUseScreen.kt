@@ -21,14 +21,15 @@ import androidx.compose.ui.unit.dp
 import com.pp.community.R
 import com.pp.community.ui.CommonCompose.CommonButton
 import com.pp.community.ui.CustomModifier.removeEffectClickable
-import com.pp.community.ui.theme.color_main
 import com.pp.community.ui.theme.color_bbbbbb
+import com.pp.community.ui.theme.color_main
 
 @Composable
 fun TermsOfUseScreen(
     isSelectedTerms1: MutableState<Boolean>,
     isSelectedTerms2: MutableState<Boolean>,
     isSelectedAll: MutableState<Boolean>,
+    onClickTerms: (String) -> Unit,
     onclickEvent: () -> Unit
 ) {
 
@@ -41,11 +42,13 @@ fun TermsOfUseScreen(
             onclickEvent = {
                 isSelectedTerms1.value = !isSelectedTerms1.value
                 isSelectedAll.value = isSelectedTerms1.value && isSelectedTerms2.value
+                onClickTerms("1")
             })
         TermsOfUseItemUI(item = "서비스 이용약관 (필수)", isSelected = isSelectedTerms2.value,
             onclickEvent = {
                 isSelectedTerms2.value = !isSelectedTerms2.value
                 isSelectedAll.value = isSelectedTerms1.value && isSelectedTerms2.value
+                onClickTerms("2")
             })
         Spacer(modifier = Modifier.weight(1f))
         Row(

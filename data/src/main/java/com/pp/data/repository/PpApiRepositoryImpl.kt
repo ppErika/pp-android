@@ -5,6 +5,8 @@ import com.pp.domain.model.comments.GetCommentsRequest
 import com.pp.domain.model.comments.GetCommentsResponse
 import com.pp.domain.model.comments.PostCommentRequest
 import com.pp.domain.model.common.CommonResponse
+import com.pp.domain.model.notice.GetNoticesRequest
+import com.pp.domain.model.notice.GetNoticesResponse
 import com.pp.domain.model.post.GetPostsRequest
 import com.pp.domain.model.post.GetPostsResponse
 import com.pp.domain.model.post.GetPreSignedUrlRequest
@@ -110,5 +112,12 @@ class PpApiRepositoryImpl @Inject constructor(
         updateUserProfileResponse: UpdateUserProfileRequest
     ): String? {
         return ppApiDataSource.updateUserProfile(remoteError, userId, updateUserProfileResponse)
+    }
+
+    override suspend fun getNotices(
+        remoteError: RemoteError,
+        getNoticesRequest: GetNoticesRequest
+    ): GetNoticesResponse? {
+        return ppApiDataSource.getNotices(remoteError, getNoticesRequest)
     }
 }

@@ -39,7 +39,7 @@ import com.pp.domain.model.users.GetUserProfileResponse
 fun SettingScreen(
     isLogin: Boolean,
     version: String,
-    profileInfo: GetUserProfileResponse,
+    profileInfo: GetUserProfileResponse?,
     onClick: (String) -> Unit
     ) {
     val settingList = listOf(
@@ -60,8 +60,10 @@ fun SettingScreen(
     Column(
         modifier = Modifier.padding(19.dp)
     ) {
-        ProfileUI("프로필 보기", profileInfo){
-            onClick("profile")
+        profileInfo?.let{
+            ProfileUI("프로필 보기", it){
+                onClick("profile")
+            }
         }
         LazyColumn(
             modifier = Modifier.padding(vertical = 10.dp)
@@ -69,9 +71,9 @@ fun SettingScreen(
             items(settingList) {
                 SettingItemUI(it, if (it == "버전 정보") version else null) {
                     when (it) {
-                        "공지사항" -> {}
-                        "개인정보 처리 방침" -> {}
-                        "서비스 이용 약관" -> {}
+                        "공지사항" -> { onClick("notice") }
+                        "개인정보 처리 방침" -> {onClick("terms1")}
+                        "서비스 이용 약관" -> {onClick("terms2")}
                     }
                 }
             }
