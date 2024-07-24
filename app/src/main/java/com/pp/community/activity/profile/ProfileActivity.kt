@@ -2,6 +2,7 @@ package com.pp.community.activity.profile
 
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Build
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -28,7 +29,7 @@ class ProfileActivity : BaseActivity<ProfileViewModel>() {
         mViewModel.run{
             profileUpdateSuccessEvent.onEach {
                 Log.d("EJ_LOG","profileUpdateSuccessEvent : $it")
-                updateProfile()
+                getUserProfile()
                 Toast.makeText(this@ProfileActivity, "프로필 수정 성공", Toast.LENGTH_SHORT).show()
             }.launchIn(this@ProfileActivity.lifecycleScope)
         }
@@ -86,10 +87,14 @@ class ProfileActivity : BaseActivity<ProfileViewModel>() {
 
     override fun init() {
         val profileInfo =
-            intent.getSerializableExtra("profileInfo", GetUserProfileResponse::class.java)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                intent.getSerializableExtra("profileInfo", GetUserProfileResponse::class.java)
+            } else {
+                intent.getSerializableExtra("profileInfo")
+            }
         profileInfo?.let {
             Log.d("profileInfo", it.toString())
-            mViewModel.setProfileInfo(it)
+            mViewModel.setProfileInfo(it as GetUserProfileResponse)
         }
     }
 

@@ -6,17 +6,23 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.core.net.toUri
 import androidx.lifecycle.viewModelScope
 import com.pp.community.base.BaseViewModel
+import com.pp.community.utils.DecodeJwtUtil
 import com.pp.community.utils.FileUtils
 import com.pp.community.widget.SingleFlowEvent
 import com.pp.domain.model.post.GetPreSignedUrlRequest
 import com.pp.domain.model.post.PreSignedUploadUrl
 import com.pp.domain.model.users.GetUserProfileResponse
 import com.pp.domain.model.users.UpdateUserProfileRequest
+import com.pp.domain.usecase.datastore.GetAccessTokenUseCase
 import com.pp.domain.usecase.post.GetPreSignedUrlUseCase
 import com.pp.domain.usecase.post.UploadFileUseCase
+import com.pp.domain.usecase.users.GetUserProfileUseCase
 import com.pp.domain.usecase.users.UpdateUserProfileUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
 import java.io.File
@@ -27,8 +33,11 @@ class ProfileViewModel @Inject constructor(
     private val application: Application,
     private val getPreSignedUrlUseCase: GetPreSignedUrlUseCase,
     private val uploadFileUseCase: UploadFileUseCase,
-    private val updateUserProfileUseCase: UpdateUserProfileUseCase
-) : BaseViewModel() {
+    private val updateUserProfileUseCase: UpdateUserProfileUseCase,
+    private val getUserProfileUseCase: GetUserProfileUseCase,
+    private val getAccessTokenUseCase: GetAccessTokenUseCase,
+    private val decodeJwtUtil: DecodeJwtUtil
+    ) : BaseViewModel() {
     var profileInfo = mutableStateOf(GetUserProfileResponse())
         private set
     var inputNickname = mutableStateOf("")
@@ -110,6 +119,23 @@ class ProfileViewModel @Inject constructor(
                     }
                 }
             }
+        }
+    }
+    fun getUserProfile(){
+        viewModelScope.launch {
+            val userId = decodeJwtUtil.getUserId(token = getAccessToken2()?:"").toInt()
+            val response = getUserProfileUseCase.execute(this@ProfileViewModel,userId)
+            response?.let{
+                profileInfo.value = it
+                Log.d("EJ_LOG","getUserProfile : $it")
+            }
+        }
+    }
+    suspend fun getAccessToken2(): String? {
+        return withContext(Dispatchers.IO) {
+            val token = getAccessTokenUseCase.invoke().first()
+            Log.d("EJ_LOG", "getAccessToken : $token")
+            token
         }
     }
 }

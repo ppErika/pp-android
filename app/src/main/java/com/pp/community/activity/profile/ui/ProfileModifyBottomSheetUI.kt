@@ -1,5 +1,6 @@
 package com.pp.community.activity.profile.ui
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -62,7 +63,10 @@ fun ProfileModifyBottomSheetUI(
                 )
                 BasicTextField(
                     value = inputNickname.value,
-                    onValueChange = { inputNickname.value = it },
+                    onValueChange = {
+                        inputNickname.value = it
+                        Log.d("EJ_LOG","onValueChange : ${inputNickname.value} / $it")
+                                    },
                     keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
                     keyboardActions = KeyboardActions(onDone = {
                         keyboardController?.hide() // 키보드 숨기기
