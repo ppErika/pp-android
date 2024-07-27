@@ -4,6 +4,7 @@ import com.pp.data.model.ApiDataResponse
 import com.pp.domain.model.comments.GetCommentsResponse
 import com.pp.domain.model.comments.PostCommentRequest
 import com.pp.domain.model.common.CommonResponse
+import com.pp.domain.model.post.GetPostDetailsResponse
 import com.pp.domain.model.post.GetPostsResponse
 import com.pp.domain.model.post.GetPreSignedUrlRequest
 import com.pp.domain.model.post.GetPreSignedUrlResponse
@@ -57,4 +58,8 @@ interface PpAuthenticationApi {
         @Path("userId") userId: Int,
         @Body updateUserProfileRequest: UpdateUserProfileRequest
     ): Response<ApiDataResponse<CommonResponse?>>
+    @GET("api/v1/posts/{postId}")
+    suspend fun getPostDetails(
+        @Path("postId") postId: Int,
+    ): Response<ApiDataResponse<GetPostDetailsResponse>>
 }

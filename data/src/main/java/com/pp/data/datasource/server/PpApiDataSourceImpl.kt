@@ -10,6 +10,7 @@ import com.pp.domain.model.comments.PostCommentRequest
 import com.pp.domain.model.common.CommonResponse
 import com.pp.domain.model.notice.GetNoticesRequest
 import com.pp.domain.model.notice.GetNoticesResponse
+import com.pp.domain.model.post.GetPostDetailsResponse
 import com.pp.domain.model.post.GetPostsRequest
 import com.pp.domain.model.post.GetPostsResponse
 import com.pp.domain.model.post.GetPreSignedUrlRequest
@@ -183,6 +184,17 @@ class PpApiDataSourceImpl @Inject constructor(
             ppApi.getNotices(
                 limit = getNoticesRequest.limit,
                 lastId = getNoticesRequest.lastId
+            )
+        }
+    }
+
+    override suspend fun getPostDetails(
+        remoteError: RemoteError,
+        postId: Int
+    ): GetPostDetailsResponse? {
+        return safeApiCallData(remoteError) {
+            ppAuthenticationApi.getPostDetails(
+                postId = postId
             )
         }
     }

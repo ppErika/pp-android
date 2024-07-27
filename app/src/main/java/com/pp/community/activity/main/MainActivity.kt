@@ -37,6 +37,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.kakao.sdk.user.UserApiClient
 import com.pp.community.R
+import com.pp.community.activity.CommunityPostDetailsActivity
 import com.pp.community.activity.DiaryDetailsActivity
 import com.pp.community.activity.UploadDiaryActivity
 import com.pp.community.activity.comment.CommentActivity
@@ -138,7 +139,8 @@ class MainActivity : BaseActivity<MainViewModel>() {
                         true -> DiaryScreen(
                             communityPostList = communityPostList,
                             onClickItemEvent = {
-                                moveCommentActivity(it.id) // 임시로 댓글창 이동
+//                                moveCommentActivity(it.id) // 임시로 댓글창 이동
+                                moveCommunityPostDetailsActivity(it.id)
                             },
                             onClickUploadEvent = {
                                 moveUploadActivity(MainNav.Community.name)
@@ -277,6 +279,11 @@ class MainActivity : BaseActivity<MainViewModel>() {
     private fun moveToWebSite(url: String){
         val intent = Intent(Intent.ACTION_VIEW)
         intent.data = Uri.parse(url)
+        startActivity(intent)
+    }
+    private fun moveCommunityPostDetailsActivity(postId: Int) {
+        val intent = Intent(this@MainActivity, CommunityPostDetailsActivity::class.java)
+        intent.putExtra("postId", postId)
         startActivity(intent)
     }
 }
