@@ -109,6 +109,10 @@ class MainActivity : BaseActivity<MainViewModel>() {
 
         LaunchedEffect(key1 = shouldRerender) {
             mViewModel.fetchMyDiaryList()
+            if (isLogin) {
+                mViewModel.getPostList()
+                mViewModel.getUserProfile()
+            }
         }
 
         Column(Modifier.fillMaxSize()) {
