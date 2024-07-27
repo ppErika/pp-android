@@ -82,9 +82,28 @@ interface PpApiDataSource {
         remoteError: RemoteError,
         getNoticesRequest: GetNoticesRequest
     ): GetNoticesResponse?
-
     suspend fun getPostDetails(
         remoteError: RemoteError,
         postId: Int,
     ): GetPostDetailsResponse?
+    suspend fun blockUser(
+        remoteError: RemoteError,
+        userId: Int
+    ): String?
+    suspend fun reportPost(
+        remoteError: RemoteError,
+        postId: Int
+    ): String?
+    suspend fun thumbsUpPost(
+        remoteError: RemoteError,
+        postId: Int
+    ): String?
+    suspend fun thumbsSidewaysPost(
+        remoteError: RemoteError,
+        postId: Int
+    ): String?
+    suspend fun deletePost(
+        remoteError: RemoteError,
+        postId: Int
+    ): String?
 }

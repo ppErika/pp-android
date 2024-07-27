@@ -198,4 +198,33 @@ class PpApiDataSourceImpl @Inject constructor(
             )
         }
     }
+    override suspend fun blockUser(remoteError: RemoteError, userId: Int): String? {
+        return safeApiCallNoContext(remoteError){
+            ppAuthenticationApi.blockUser(userId)
+        }
+    }
+
+    override suspend fun reportPost(remoteError: RemoteError, postId: Int): String? {
+        return safeApiCallNoContext(remoteError){
+            ppAuthenticationApi.reportPost(postId)
+        }
+    }
+
+    override suspend fun thumbsUpPost(remoteError: RemoteError, postId: Int): String? {
+        return safeApiCallNoContext(remoteError){
+            ppAuthenticationApi.thumbsUpPost(postId)
+        }
+    }
+
+    override suspend fun thumbsSidewaysPost(remoteError: RemoteError, postId: Int): String? {
+        return safeApiCallNoContext(remoteError){
+            ppAuthenticationApi.thumbsSideways(postId)
+        }
+    }
+
+    override suspend fun deletePost(remoteError: RemoteError, postId: Int): String? {
+        return safeApiCallNoContext(remoteError){
+            ppAuthenticationApi.deletePost(postId)
+        }
+    }
 }

@@ -1,12 +1,6 @@
 package com.pp.domain.model.post
 
-import java.io.Serializable
-
 data class GetPostDetailsResponse(
-    var post: PostDetailsModel
-)
-
-data class PostDetailsModel(
     var id: Int = 0,
     var postImageUrls: List<String>? = mutableListOf(),
     var title: String = "",
@@ -14,9 +8,9 @@ data class PostDetailsModel(
     var createDate: String = "",
     var thumbsUpCount: Int = 0,
     var commentCount: Int = 0,
-    var userActionHistory: UserActionHistoryModel,
-    var createdUser: CreatedUserModel,
-):Serializable
+    var userActionHistory: UserActionHistoryModel = UserActionHistoryModel(),
+    var createdUser: CreatedUserModel = CreatedUserModel(),
+)
 
 data class UserActionHistoryModel(
     var thumbsUpped: Boolean = false,

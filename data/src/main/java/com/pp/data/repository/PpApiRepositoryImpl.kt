@@ -128,4 +128,23 @@ class PpApiRepositoryImpl @Inject constructor(
     ): GetPostDetailsResponse? {
         return ppApiDataSource.getPostDetails(remoteError, postId)
     }
+    override suspend fun blockUser(remoteError: RemoteError, userId: Int): String? {
+        return ppApiDataSource.blockUser(remoteError,userId)
+    }
+
+    override suspend fun reportPost(remoteError: RemoteError, postId: Int): String? {
+        return ppApiDataSource.reportPost(remoteError,postId)
+    }
+
+    override suspend fun thumbsUpPost(remoteError: RemoteError, postId: Int): String? {
+        return ppApiDataSource.thumbsUpPost(remoteError, postId)
+    }
+
+    override suspend fun thumbsSidewaysPost(remoteError: RemoteError, postId: Int): String? {
+        return thumbsSidewaysPost(remoteError, postId)
+    }
+
+    override suspend fun deletePost(remoteError: RemoteError, postId: Int): String? {
+        return deletePost(remoteError, postId)
+    }
 }

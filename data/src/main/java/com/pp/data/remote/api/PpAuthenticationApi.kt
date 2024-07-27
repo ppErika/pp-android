@@ -13,6 +13,7 @@ import com.pp.domain.model.users.GetUserProfileResponse
 import com.pp.domain.model.users.UpdateUserProfileRequest
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
@@ -62,4 +63,24 @@ interface PpAuthenticationApi {
     suspend fun getPostDetails(
         @Path("postId") postId: Int,
     ): Response<ApiDataResponse<GetPostDetailsResponse>>
+    @POST("api/v1/users/{userId}/block")
+    suspend fun blockUser(
+        @Path("userId") userId: Int
+    ): Response<ApiDataResponse<CommonResponse?>>
+    @POST("api/v1/posts/{postId}/report")
+    suspend fun reportPost(
+        @Path("postId") postId: Int
+    ): Response<ApiDataResponse<CommonResponse?>>
+    @POST("api/v1/posts/{postId}/thumbs-up")
+    suspend fun thumbsUpPost(
+        @Path("postId") postId: Int
+    ): Response<ApiDataResponse<CommonResponse?>>
+    @POST("api/v1/posts/{postId}/thumbs-sideways")
+    suspend fun thumbsSideways(
+        @Path("postId") postId: Int
+    ): Response<ApiDataResponse<CommonResponse?>>
+    @DELETE("api/v1/posts/{postId}")
+    suspend fun deletePost(
+        @Path("postId") postId: Int
+    ): Response<ApiDataResponse<CommonResponse?>>
 }
