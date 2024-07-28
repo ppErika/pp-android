@@ -75,6 +75,10 @@ class CommunityPostDetailsActivity : BaseActivity<CommunityPostDetailsViewModel>
                 Toast.makeText(this@CommunityPostDetailsActivity, it, Toast.LENGTH_SHORT).show()
                 finish()
             }.launchIn(lifecycleScope)
+            blockUserSuccessEvent.onEach {
+                Toast.makeText(this@CommunityPostDetailsActivity, it, Toast.LENGTH_SHORT).show()
+                finish()
+            }.launchIn(lifecycleScope)
         }
     }
 
@@ -124,6 +128,12 @@ class CommunityPostDetailsActivity : BaseActivity<CommunityPostDetailsViewModel>
                                         text = { Text(text = stringResource(id = R.string.btn_report)) },
                                         onClick = {
                                             mViewModel.reportPost()
+                                        }
+                                    )
+                                    DropdownMenuItem(
+                                        text = { Text(text = "유저 차단") },
+                                        onClick = {
+                                            mViewModel.blockUser(postDetails?.createdUser?.id?:-1)
                                         }
                                     )
                                 }
