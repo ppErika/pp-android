@@ -35,6 +35,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.kakao.sdk.user.UserApiClient
 import com.pp.community.R
 import com.pp.community.activity.CommunityPostDetailsActivity
@@ -98,6 +100,7 @@ class MainActivity : BaseActivity<MainViewModel>() {
 
         val packageInfo =
             applicationContext.packageManager.getPackageInfo(applicationContext.packageName, 0)
+        var isRefreshing by remember { mutableStateOf(false) }
 
         LaunchedEffect(key1 = isLogin) {
             if (isLogin) {
@@ -140,17 +143,29 @@ class MainActivity : BaseActivity<MainViewModel>() {
                 composable(route = MainNav.Community.name) {
                     mViewModel.setAppBarTitle(MainNav.Community.name)
                     when (isLogin) {
-                        true -> DiaryScreen(
-                            communityPostList = communityPostList,
-                            onClickItemEvent = {
+                        true -> {
+                            SwipeRefresh(
+                                state = rememberSwipeRefreshState(isRefreshing = isRefreshing),
+                                onRefresh = {
+                                    isRefreshing = true
+                                    mViewModel.getPostList()
+                                    isRefreshing = false
+                                }
+                            ){
+                                DiaryScreen(
+                                    communityPostList = communityPostList,
+                                    onClickItemEvent = {
 //                                moveCommentActivity(it.id) // 임시로 댓글창 이동
-                                moveCommunityPostDetailsActivity(it.id)
-                            },
-                            onClickUploadEvent = {
-                                moveUploadActivity(MainNav.Community.name)
-                            },
-                            loadEvent = { mViewModel.getPostList(false) }
-                        )
+                                        moveCommunityPostDetailsActivity(it.id)
+                                    },
+                                    onClickUploadEvent = {
+                                        moveUploadActivity(MainNav.Community.name)
+                                    },
+                                    loadEvent = { mViewModel.getPostList(false) }
+                                )
+                            }
+
+                        }
 
                         false -> LoginScreen(
 
