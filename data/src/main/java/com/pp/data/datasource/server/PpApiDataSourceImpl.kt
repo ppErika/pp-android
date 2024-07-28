@@ -10,6 +10,7 @@ import com.pp.domain.model.comments.PostCommentRequest
 import com.pp.domain.model.common.CommonResponse
 import com.pp.domain.model.notice.GetNoticesRequest
 import com.pp.domain.model.notice.GetNoticesResponse
+import com.pp.domain.model.post.GetPostDetailsResponse
 import com.pp.domain.model.post.GetPostsRequest
 import com.pp.domain.model.post.GetPostsResponse
 import com.pp.domain.model.post.GetPreSignedUrlRequest
@@ -184,6 +185,46 @@ class PpApiDataSourceImpl @Inject constructor(
                 limit = getNoticesRequest.limit,
                 lastId = getNoticesRequest.lastId
             )
+        }
+    }
+
+    override suspend fun getPostDetails(
+        remoteError: RemoteError,
+        postId: Int
+    ): GetPostDetailsResponse? {
+        return safeApiCallData(remoteError) {
+            ppAuthenticationApi.getPostDetails(
+                postId = postId
+            )
+        }
+    }
+    override suspend fun blockUser(remoteError: RemoteError, userId: Int): String? {
+        return safeApiCallNoContext(remoteError){
+            ppAuthenticationApi.blockUser(userId)
+        }
+    }
+
+    override suspend fun reportPost(remoteError: RemoteError, postId: Int): String? {
+        return safeApiCallNoContext(remoteError){
+            ppAuthenticationApi.reportPost(postId)
+        }
+    }
+
+    override suspend fun thumbsUpPost(remoteError: RemoteError, postId: Int): String? {
+        return safeApiCallNoContext(remoteError){
+            ppAuthenticationApi.thumbsUpPost(postId)
+        }
+    }
+
+    override suspend fun thumbsSidewaysPost(remoteError: RemoteError, postId: Int): String? {
+        return safeApiCallNoContext(remoteError){
+            ppAuthenticationApi.thumbsSideways(postId)
+        }
+    }
+
+    override suspend fun deletePost(remoteError: RemoteError, postId: Int): String? {
+        return safeApiCallNoContext(remoteError){
+            ppAuthenticationApi.deletePost(postId)
         }
     }
 }

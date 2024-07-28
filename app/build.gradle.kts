@@ -110,4 +110,7 @@ dependencies {
     // coil
     implementation(libs.io.coil.kt.coil)
     implementation(libs.io.coil.kt.compose)
+
+    // swipeRefresh
+    implementation(libs.accompanist.swiperefresh)
 }

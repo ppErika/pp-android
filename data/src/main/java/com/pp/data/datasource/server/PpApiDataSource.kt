@@ -6,6 +6,7 @@ import com.pp.domain.model.comments.PostCommentRequest
 import com.pp.domain.model.common.CommonResponse
 import com.pp.domain.model.notice.GetNoticesRequest
 import com.pp.domain.model.notice.GetNoticesResponse
+import com.pp.domain.model.post.GetPostDetailsResponse
 import com.pp.domain.model.post.GetPostsRequest
 import com.pp.domain.model.post.GetPostsResponse
 import com.pp.domain.model.post.GetPreSignedUrlRequest
@@ -81,4 +82,28 @@ interface PpApiDataSource {
         remoteError: RemoteError,
         getNoticesRequest: GetNoticesRequest
     ): GetNoticesResponse?
+    suspend fun getPostDetails(
+        remoteError: RemoteError,
+        postId: Int,
+    ): GetPostDetailsResponse?
+    suspend fun blockUser(
+        remoteError: RemoteError,
+        userId: Int
+    ): String?
+    suspend fun reportPost(
+        remoteError: RemoteError,
+        postId: Int
+    ): String?
+    suspend fun thumbsUpPost(
+        remoteError: RemoteError,
+        postId: Int
+    ): String?
+    suspend fun thumbsSidewaysPost(
+        remoteError: RemoteError,
+        postId: Int
+    ): String?
+    suspend fun deletePost(
+        remoteError: RemoteError,
+        postId: Int
+    ): String?
 }

@@ -7,6 +7,7 @@ import com.pp.domain.model.comments.PostCommentRequest
 import com.pp.domain.model.common.CommonResponse
 import com.pp.domain.model.notice.GetNoticesRequest
 import com.pp.domain.model.notice.GetNoticesResponse
+import com.pp.domain.model.post.GetPostDetailsResponse
 import com.pp.domain.model.post.GetPostsRequest
 import com.pp.domain.model.post.GetPostsResponse
 import com.pp.domain.model.post.GetPreSignedUrlRequest
@@ -119,5 +120,31 @@ class PpApiRepositoryImpl @Inject constructor(
         getNoticesRequest: GetNoticesRequest
     ): GetNoticesResponse? {
         return ppApiDataSource.getNotices(remoteError, getNoticesRequest)
+    }
+
+    override suspend fun getPostDetails(
+        remoteError: RemoteError,
+        postId: Int
+    ): GetPostDetailsResponse? {
+        return ppApiDataSource.getPostDetails(remoteError, postId)
+    }
+    override suspend fun blockUser(remoteError: RemoteError, userId: Int): String? {
+        return ppApiDataSource.blockUser(remoteError,userId)
+    }
+
+    override suspend fun reportPost(remoteError: RemoteError, postId: Int): String? {
+        return ppApiDataSource.reportPost(remoteError,postId)
+    }
+
+    override suspend fun thumbsUpPost(remoteError: RemoteError, postId: Int): String? {
+        return ppApiDataSource.thumbsUpPost(remoteError, postId)
+    }
+
+    override suspend fun thumbsSidewaysPost(remoteError: RemoteError, postId: Int): String? {
+        return ppApiDataSource.thumbsSidewaysPost(remoteError, postId)
+    }
+
+    override suspend fun deletePost(remoteError: RemoteError, postId: Int): String? {
+        return ppApiDataSource.deletePost(remoteError, postId)
     }
 }

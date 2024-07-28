@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -35,11 +36,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.kakao.sdk.user.UserApiClient
 import com.pp.community.R
+import com.pp.community.activity.CommunityPostDetailsActivity
 import com.pp.community.activity.DiaryDetailsActivity
 import com.pp.community.activity.UploadDiaryActivity
-import com.pp.community.activity.comment.CommentActivity
 import com.pp.community.activity.main.route.MainNav
 import com.pp.community.activity.main.ui.DiaryScreen
 import com.pp.community.activity.main.ui.LoginScreen
@@ -97,7 +100,11 @@ class MainActivity : BaseActivity<MainViewModel>() {
 
         val packageInfo =
             applicationContext.packageManager.getPackageInfo(applicationContext.packageName, 0)
+        var isRefreshing by remember { mutableStateOf(false) }
 
+        val reportPostID = remember {
+            mViewModel.reportPostId
+        }
         LaunchedEffect(key1 = isLogin) {
             if (isLogin) {
                 mViewModel.getPostList()
@@ -108,6 +115,10 @@ class MainActivity : BaseActivity<MainViewModel>() {
 
         LaunchedEffect(key1 = shouldRerender) {
             mViewModel.fetchMyDiaryList()
+            if (isLogin) {
+                mViewModel.getPostList()
+                mViewModel.getUserProfile()
+            }
         }
 
         Column(Modifier.fillMaxSize()) {
@@ -135,16 +146,28 @@ class MainActivity : BaseActivity<MainViewModel>() {
                 composable(route = MainNav.Community.name) {
                     mViewModel.setAppBarTitle(MainNav.Community.name)
                     when (isLogin) {
-                        true -> DiaryScreen(
-                            communityPostList = communityPostList,
-                            onClickItemEvent = {
-                                moveCommentActivity(it.id) // 임시로 댓글창 이동
-                            },
-                            onClickUploadEvent = {
-                                moveUploadActivity(MainNav.Community.name)
-                            },
-                            loadEvent = { mViewModel.getPostList(false) }
-                        )
+                        true -> {
+                            SwipeRefresh(
+                                state = rememberSwipeRefreshState(isRefreshing = isRefreshing),
+                                onRefresh = {
+                                    isRefreshing = true
+                                    mViewModel.getPostList()
+                                    isRefreshing = false
+                                }
+                            ){
+                                DiaryScreen(
+                                    communityPostList = communityPostList,
+                                    onClickItemEvent = {
+                                        moveCommunityPostDetailsActivity(it.id)
+                                    },
+                                    onClickUploadEvent = {
+                                        moveUploadActivity(MainNav.Community.name)
+                                    },
+                                    loadEvent = { mViewModel.getPostList(false) }
+                                )
+                            }
+
+                        }
 
                         false -> LoginScreen(
 
@@ -247,13 +270,6 @@ class MainActivity : BaseActivity<MainViewModel>() {
         }
     }
 
-    private fun moveCommentActivity(postId: Int) {
-        Log.d("EJ_LOG", "moveCommentAcitivyt : $postId")
-        val intent = Intent(this, CommentActivity::class.java)
-        intent.putExtra("postId", postId)
-        startActivity(intent)
-    }
-
     private fun moveUploadActivity(type: String) {
         val intent = Intent(this@MainActivity, UploadDiaryActivity::class.java)
         intent.putExtra("type", type)
@@ -278,5 +294,24 @@ class MainActivity : BaseActivity<MainViewModel>() {
         val intent = Intent(Intent.ACTION_VIEW)
         intent.data = Uri.parse(url)
         startActivity(intent)
+    }
+    private fun moveCommunityPostDetailsActivity(postId: Int) {
+        val intent = Intent(this@MainActivity, CommunityPostDetailsActivity::class.java)
+        intent.putExtra("postId", postId)
+//        startActivity(intent)
+        startForResult.launch(intent)
+    }
+    private val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            val data: Intent? = result.data
+            data?.let {
+                val resultValue = it.getIntExtra("result_key",-1)
+                Log.d("MainActivity", "Result: $resultValue")
+                if(resultValue != -1){
+                    mViewModel.reportPostId = resultValue
+                    mViewModel.getPostList()
+                }
+            }
+        }
     }
 }
