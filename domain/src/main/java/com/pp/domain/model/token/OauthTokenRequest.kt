@@ -5,7 +5,7 @@ data class OauthTokenRequest(
     var client_id: String = "",
     var client_assertion: String = "",
     var client_assertion_type: String = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
-    var authorization_code: String = "",
+    var authorization_code: String? = null,
     var scope: String = "user.read user.write post.read post.write file.write",
-    var refresh_token: String = "",
+    var refresh_token: String? = null,
 )
