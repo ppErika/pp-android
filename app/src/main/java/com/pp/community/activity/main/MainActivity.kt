@@ -253,13 +253,6 @@ class MainActivity : BaseActivity<MainViewModel>() {
         }
     }
 
-    private fun moveCommentActivity(postId: Int) {
-        Log.d("EJ_LOG", "moveCommentAcitivyt : $postId")
-        val intent = Intent(this, CommentActivity::class.java)
-        intent.putExtra("postId", postId)
-        startActivity(intent)
-    }
-
     private fun moveUploadActivity(type: String) {
         val intent = Intent(this@MainActivity, UploadDiaryActivity::class.java)
         intent.putExtra("type", type)

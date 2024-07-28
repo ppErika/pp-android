@@ -121,7 +121,7 @@ class DiaryDetailsActivity : BaseActivity<DiaryDetailsViewModel>() {
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(258.dp)
+                                    .height(361.dp)
                                     .background(
                                         color = Color.LightGray, // 기본 배경색 설정
                                         shape = RoundedCornerShape(10.dp),
@@ -136,7 +136,7 @@ class DiaryDetailsActivity : BaseActivity<DiaryDetailsViewModel>() {
                                 ) { page ->
                                     Image(
                                         modifier = Modifier
-                                            .height(258.dp)
+                                            .height(361.dp)
                                             .fillMaxWidth()
                                             .clip(RoundedCornerShape(10.dp))
                                             .background(

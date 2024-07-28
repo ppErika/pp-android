@@ -5,7 +5,7 @@ data class GetPostDetailsResponse(
     var postImageUrls: List<String>? = mutableListOf(),
     var title: String = "",
     var content: String = "",
-    var createDate: String = "",
+    var createdDate: String = "",
     var thumbsUpCount: Int = 0,
     var commentCount: Int = 0,
     var userActionHistory: UserActionHistoryModel = UserActionHistoryModel(),

@@ -71,7 +71,6 @@ class CommunityPostDetailsViewModel @Inject constructor(
     fun getPostDetails() {
         viewModelScope.launch {
             val response = getPostDetailsUseCase.execute(this@CommunityPostDetailsViewModel, postId)
-            Log.d("ErikaLog", "getPostDetails: $response")
             response?.let {
                 _postDetails.value = it
             }
@@ -103,6 +102,30 @@ class CommunityPostDetailsViewModel @Inject constructor(
                 val response = blockUserUseCase.execute(this@CommunityPostDetailsViewModel, userId)
                 response?.let{
                     _blockUserSuccessEvent.emit(it)
+                }
+            }
+        }
+    }
+
+    fun thumbsUpPost(postId: Int){
+        if(postId != -1) {
+            viewModelScope.launch {
+                val response =
+                    thumbsUpPostUseCase.execute(this@CommunityPostDetailsViewModel, postId)
+                response?.let {
+                    getPostDetails()
+                }
+            }
+        }
+    }
+
+    fun thumbsSidewaysPost(postId: Int){
+        if(postId != -1) {
+            viewModelScope.launch {
+                val response =
+                    thumbsSidewaysPostUseCase.execute(this@CommunityPostDetailsViewModel, postId)
+                response?.let {
+                    getPostDetails()
                 }
             }
         }

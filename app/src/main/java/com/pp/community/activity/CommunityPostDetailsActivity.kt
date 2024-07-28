@@ -1,11 +1,14 @@
 package com.pp.community.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -45,17 +49,25 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
+import coil.compose.rememberImagePainter
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.pp.community.R
+import com.pp.community.activity.comment.CommentActivity
 import com.pp.community.base.BaseActivity
 import com.pp.community.ui.getRobotoFontFamily
+import com.pp.community.ui.theme.color_F5004F
+import com.pp.community.ui.theme.color_bbbbbb
+import com.pp.community.ui.theme.color_black
+import com.pp.community.ui.theme.color_main
+import com.pp.community.ui.theme.color_white
 import com.pp.community.viewmodel.CommunityPostDetailsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
@@ -133,7 +145,7 @@ class CommunityPostDetailsActivity : BaseActivity<CommunityPostDetailsViewModel>
                                     DropdownMenuItem(
                                         text = { Text(text = "유저 차단") },
                                         onClick = {
-                                            mViewModel.blockUser(postDetails?.createdUser?.id?:-1)
+                                            mViewModel.blockUser(postDetails?.createdUser?.id ?: -1)
                                         }
                                     )
                                 }
@@ -156,7 +168,7 @@ class CommunityPostDetailsActivity : BaseActivity<CommunityPostDetailsViewModel>
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(258.dp)
+                                    .height(361.dp)
                                     .background(
                                         color = Color.LightGray, // 기본 배경색 설정
                                         shape = RoundedCornerShape(10.dp),
@@ -173,7 +185,7 @@ class CommunityPostDetailsActivity : BaseActivity<CommunityPostDetailsViewModel>
                                 ) { page ->
                                     GlideImage(
                                         modifier = Modifier
-                                            .height(258.dp)
+                                            .height(361.dp)
                                             .fillMaxWidth()
                                             .clip(RoundedCornerShape(10.dp))
                                             .background(
@@ -208,6 +220,31 @@ class CommunityPostDetailsActivity : BaseActivity<CommunityPostDetailsViewModel>
                             }
                         }
 
+                        Row(
+                            modifier = Modifier.padding(top = 31.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            GlideImage(
+                                modifier = Modifier
+                                    .height(58.dp)
+                                    .width(58.dp)
+                                    .clip(RoundedCornerShape(30.dp))
+                                    .background(
+                                        color = Color.LightGray,
+                                    ),
+                                model = post.createdUser.profileImageUrl,
+                                contentDescription = null,
+                                contentScale = ContentScale.Crop
+                            )
+
+                            Text(
+                                text = post.createdUser.nickname,
+                                modifier = Modifier.padding(start = 20.dp),
+                                fontSize = 16.sp,
+                                fontFamily = getRobotoFontFamily()
+                            )
+                        }
+
                         Text(
                             text = post.title,
                             modifier = Modifier.padding(top = 25.dp),
@@ -215,7 +252,7 @@ class CommunityPostDetailsActivity : BaseActivity<CommunityPostDetailsViewModel>
                             fontFamily = getRobotoFontFamily()
                         )
                         Text(
-                            text = post.createDate,
+                            text = post.createdDate,
                             modifier = Modifier.padding(top = 5.dp),
                             fontSize = 12.sp,
                             fontFamily = getRobotoFontFamily()
@@ -226,6 +263,61 @@ class CommunityPostDetailsActivity : BaseActivity<CommunityPostDetailsViewModel>
                             fontSize = 12.sp,
                             fontFamily = getRobotoFontFamily()
                         )
+
+                        Row(
+                            modifier = Modifier.padding(top = 21.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "좋아요",
+                                fontSize = 12.sp,
+                                fontFamily = getRobotoFontFamily()
+                            )
+                            Row(
+                                modifier = Modifier
+                                    .clickable {
+                                        if (post.userActionHistory.thumbsUpped) mViewModel.thumbsSidewaysPost(
+                                            post.id
+                                        ) else mViewModel.thumbsUpPost(post.id)
+                                    },
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_like),
+                                    contentDescription = "Like Icon",
+                                    modifier = Modifier.size(20.dp),
+                                    tint = if (post.userActionHistory.thumbsUpped) color_F5004F else color_black
+                                )
+                                Text(
+                                    text = post.thumbsUpCount.toString(),
+                                    modifier = Modifier.padding(start = 2.dp),
+                                    fontSize = 12.sp,
+                                    fontFamily = getRobotoFontFamily()
+                                )
+                            }
+
+                            Row(
+                                modifier = Modifier
+                                    .clickable { moveCommentActivity(post.id) },
+                            ) {
+                                Text(
+                                    text = "댓글",
+                                    fontSize = 12.sp,
+                                    modifier = Modifier.padding(start = 11.dp),
+                                    fontFamily = getRobotoFontFamily()
+                                )
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_comment),
+                                    contentDescription = "Comment Icon",
+                                    modifier = Modifier.size(20.dp)
+                                )
+                                Text(
+                                    text = post.commentCount.toString(),
+                                    modifier = Modifier.padding(start = 2.dp),
+                                    fontSize = 12.sp,
+                                    fontFamily = getRobotoFontFamily()
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -240,7 +332,6 @@ class CommunityPostDetailsActivity : BaseActivity<CommunityPostDetailsViewModel>
 
     override fun init() {
         val postId = intent.getIntExtra("postId", -1)
-        Log.d("ErikaLog", "postId: $postId")
         if (postId != -1) {
             viewModel.setPostId(postId)
             viewModel.getPostDetails()
@@ -250,5 +341,12 @@ class CommunityPostDetailsActivity : BaseActivity<CommunityPostDetailsViewModel>
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
+    }
+
+    private fun moveCommentActivity(postId: Int) {
+        Log.d("EJ_LOG", "moveCommentAcitivyt : $postId")
+        val intent = Intent(this, CommentActivity::class.java)
+        intent.putExtra("postId", postId)
+        startActivity(intent)
     }
 }
