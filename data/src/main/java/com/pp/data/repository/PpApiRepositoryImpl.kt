@@ -141,10 +141,10 @@ class PpApiRepositoryImpl @Inject constructor(
     }
 
     override suspend fun thumbsSidewaysPost(remoteError: RemoteError, postId: Int): String? {
-        return thumbsSidewaysPost(remoteError, postId)
+        return ppApiDataSource.thumbsSidewaysPost(remoteError, postId)
     }
 
     override suspend fun deletePost(remoteError: RemoteError, postId: Int): String? {
-        return deletePost(remoteError, postId)
+        return ppApiDataSource.deletePost(remoteError, postId)
     }
 }

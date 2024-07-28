@@ -2,6 +2,7 @@ package com.pp.community.activity
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -49,6 +50,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.pp.community.R
@@ -56,16 +58,28 @@ import com.pp.community.base.BaseActivity
 import com.pp.community.ui.getRobotoFontFamily
 import com.pp.community.viewmodel.CommunityPostDetailsViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 @AndroidEntryPoint
 class CommunityPostDetailsActivity : BaseActivity<CommunityPostDetailsViewModel>() {
     override val viewModel: CommunityPostDetailsViewModel by viewModels()
 
     override fun observerViewModel() {
-        // ViewModel의 LiveData 또는 State를 관찰하여 UI를 업데이트합니다.
+        mViewModel.run {
+            deletePostSuccessEvent.onEach {
+                Toast.makeText(this@CommunityPostDetailsActivity, it, Toast.LENGTH_SHORT).show()
+                finish()
+            }.launchIn(lifecycleScope)
+            reportPostSuccessEvent.onEach {
+                Toast.makeText(this@CommunityPostDetailsActivity, it, Toast.LENGTH_SHORT).show()
+                finish()
+            }.launchIn(lifecycleScope)
+        }
     }
 
-    @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class,
+    @OptIn(
+        ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class,
         ExperimentalGlideComposeApi::class
     )
     @Composable
@@ -95,13 +109,27 @@ class CommunityPostDetailsActivity : BaseActivity<CommunityPostDetailsViewModel>
                             )
                         }
                         DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
-                            DropdownMenuItem(
-                                text = { Text(text = stringResource(id = R.string.btn_report)) },
-                                onClick = { if(postDetails?.id != null) {
-                                    // TODO: 신고하기
-                                    finish()
-                                } }
-                            )
+                            when (mViewModel.getUserId() == postDetails?.createdUser?.id) {
+                                true -> {
+                                    DropdownMenuItem(
+                                        text = { Text(text = stringResource(id = R.string.btn_delete)) },
+                                        onClick = {
+                                            mViewModel.deletePost()
+                                        }
+                                    )
+                                }
+
+                                false -> {
+                                    DropdownMenuItem(
+                                        text = { Text(text = stringResource(id = R.string.btn_report)) },
+                                        onClick = {
+                                            mViewModel.reportPost()
+                                        }
+                                    )
+                                }
+
+                            }
+
                         }
                     },
                     scrollBehavior = scrollBehavior,
@@ -125,7 +153,9 @@ class CommunityPostDetailsActivity : BaseActivity<CommunityPostDetailsViewModel>
                                     )
                             ) {
                                 val pagerState =
-                                    rememberPagerState(pageCount = { post.postImageUrls?.size ?: 0 })
+                                    rememberPagerState(pageCount = {
+                                        post.postImageUrls?.size ?: 0
+                                    })
 
                                 HorizontalPager(
                                     state = pagerState,
@@ -202,7 +232,8 @@ class CommunityPostDetailsActivity : BaseActivity<CommunityPostDetailsViewModel>
         val postId = intent.getIntExtra("postId", -1)
         Log.d("ErikaLog", "postId: $postId")
         if (postId != -1) {
-            viewModel.getPostDetails(postId)
+            viewModel.setPostId(postId)
+            viewModel.getPostDetails()
         }
     }
 
