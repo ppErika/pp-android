@@ -69,6 +69,7 @@ class MainViewModel @Inject constructor(
 
     private var lastId: Int? = null
     private var kakaoIdToken: String = ""
+    var reportPostId: Int = -1
 
     // 나의 일기
     private val _postList = MutableLiveData<List<PostModel>>()
@@ -202,7 +203,7 @@ class MainViewModel @Inject constructor(
 
                     }
                     communityPostList.addAll(it.apply{
-                        this.map{post -> post.type = "COMMUNITY"}
+                        this.filter{it.id!=reportPostId}.map{post -> post.type = "COMMUNITY"}
                     })
                     if(it.size==20){
                         lastId = it.last().id

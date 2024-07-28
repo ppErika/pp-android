@@ -6,7 +6,6 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -56,7 +55,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
-import coil.compose.rememberImagePainter
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.pp.community.R
@@ -64,10 +62,7 @@ import com.pp.community.activity.comment.CommentActivity
 import com.pp.community.base.BaseActivity
 import com.pp.community.ui.getRobotoFontFamily
 import com.pp.community.ui.theme.color_F5004F
-import com.pp.community.ui.theme.color_bbbbbb
 import com.pp.community.ui.theme.color_black
-import com.pp.community.ui.theme.color_main
-import com.pp.community.ui.theme.color_white
 import com.pp.community.viewmodel.CommunityPostDetailsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
@@ -85,7 +80,7 @@ class CommunityPostDetailsActivity : BaseActivity<CommunityPostDetailsViewModel>
             }.launchIn(lifecycleScope)
             reportPostSuccessEvent.onEach {
                 Toast.makeText(this@CommunityPostDetailsActivity, it, Toast.LENGTH_SHORT).show()
-                finish()
+                finishWithResult()
             }.launchIn(lifecycleScope)
             blockUserSuccessEvent.onEach {
                 Toast.makeText(this@CommunityPostDetailsActivity, it, Toast.LENGTH_SHORT).show()
@@ -348,5 +343,12 @@ class CommunityPostDetailsActivity : BaseActivity<CommunityPostDetailsViewModel>
         val intent = Intent(this, CommentActivity::class.java)
         intent.putExtra("postId", postId)
         startActivity(intent)
+    }
+    private fun finishWithResult() {
+        val data = Intent().apply {
+            putExtra("result_key", mViewModel.getPostId()) // 전달할 데이터 설정
+        }
+        setResult(RESULT_OK, data)
+        finish()
     }
 }

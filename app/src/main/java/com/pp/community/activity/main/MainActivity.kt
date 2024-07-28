@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -42,7 +43,6 @@ import com.pp.community.R
 import com.pp.community.activity.CommunityPostDetailsActivity
 import com.pp.community.activity.DiaryDetailsActivity
 import com.pp.community.activity.UploadDiaryActivity
-import com.pp.community.activity.comment.CommentActivity
 import com.pp.community.activity.main.route.MainNav
 import com.pp.community.activity.main.ui.DiaryScreen
 import com.pp.community.activity.main.ui.LoginScreen
@@ -102,6 +102,9 @@ class MainActivity : BaseActivity<MainViewModel>() {
             applicationContext.packageManager.getPackageInfo(applicationContext.packageName, 0)
         var isRefreshing by remember { mutableStateOf(false) }
 
+        val reportPostID = remember {
+            mViewModel.reportPostId
+        }
         LaunchedEffect(key1 = isLogin) {
             if (isLogin) {
                 mViewModel.getPostList()
@@ -155,7 +158,6 @@ class MainActivity : BaseActivity<MainViewModel>() {
                                 DiaryScreen(
                                     communityPostList = communityPostList,
                                     onClickItemEvent = {
-//                                moveCommentActivity(it.id) // 임시로 댓글창 이동
                                         moveCommunityPostDetailsActivity(it.id)
                                     },
                                     onClickUploadEvent = {
@@ -296,6 +298,20 @@ class MainActivity : BaseActivity<MainViewModel>() {
     private fun moveCommunityPostDetailsActivity(postId: Int) {
         val intent = Intent(this@MainActivity, CommunityPostDetailsActivity::class.java)
         intent.putExtra("postId", postId)
-        startActivity(intent)
+//        startActivity(intent)
+        startForResult.launch(intent)
+    }
+    private val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            val data: Intent? = result.data
+            data?.let {
+                val resultValue = it.getIntExtra("result_key",-1)
+                Log.d("MainActivity", "Result: $resultValue")
+                if(resultValue != -1){
+                    mViewModel.reportPostId = resultValue
+                    mViewModel.getPostList()
+                }
+            }
+        }
     }
 }
