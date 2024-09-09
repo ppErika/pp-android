@@ -20,6 +20,22 @@ https://play.google.com/store/apps/details?id=com.pp.community
 
 ------------
 
+## 기술 스택 & 라이브러리
+- IDE -> Android Studio
+- Language -> Kotlin
+- Network -> Retrofit,OkHttp
+- Dependency injection -> Dagger Hilt
+- Jetpack
+  - Compose
+  - ViewModel
+  - Preferences DataStore
+  - Room
+- Architecture
+  - Google's official architecture guidance. -> https://developer.android.com/topic/architecture?hl=ko
+  - MVVM (Model - View - ViweModel)
+
+------------
+
 ## 앱 기능 소개
 + 직관적인 게시물 보기
 + 유저의 프로필 구경하기
