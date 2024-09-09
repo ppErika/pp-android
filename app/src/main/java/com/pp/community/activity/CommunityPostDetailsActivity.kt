@@ -103,7 +103,7 @@ class CommunityPostDetailsActivity : BaseActivity<CommunityPostDetailsViewModel>
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = {
                 CenterAlignedTopAppBar(
-                    title = { Text(text = postDetails?.title ?: "") },
+                    title = { },
                     navigationIcon = {
                         IconButton(onClick = { finish() }) {
                             Icon(
@@ -275,6 +275,7 @@ class CommunityPostDetailsActivity : BaseActivity<CommunityPostDetailsViewModel>
                                             post.id
                                         ) else mViewModel.thumbsUpPost(post.id)
                                     },
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Icon(
                                     painter = painterResource(id = R.drawable.ic_like),
@@ -293,6 +294,7 @@ class CommunityPostDetailsActivity : BaseActivity<CommunityPostDetailsViewModel>
                             Row(
                                 modifier = Modifier
                                     .clickable { moveCommentActivity(post.id) },
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
                                     text = "댓글",

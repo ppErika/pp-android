@@ -60,11 +60,14 @@ fun SettingScreen(
     Column(
         modifier = Modifier.padding(19.dp)
     ) {
-        profileInfo?.let{
-            ProfileUI("프로필 보기", it){
-                onClick("profile")
+        if(isLogin){
+            profileInfo?.let{
+                ProfileUI("프로필 보기", it){
+                    onClick("profile")
+                }
             }
         }
+
         LazyColumn(
             modifier = Modifier.padding(vertical = 10.dp)
         ) {

@@ -255,7 +255,9 @@ class MainViewModel @Inject constructor(
             val userId = decodeJwtUtil.getUserId(token = getAccessToken2()?:"").toInt()
             val response = getUserProfileUseCase.execute(this@MainViewModel,userId)
             response?.let{
-                profileInfo.value = it
+                profileInfo.value = it.apply {
+                    this.posts.map{post -> post.type = "COMMUNITY"}
+                }
                 Log.d("EJ_LOG","getUserProfile : $it")
             }
         }
