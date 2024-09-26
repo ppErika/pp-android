@@ -45,4 +45,5 @@ https://play.google.com/store/apps/details?id=com.pp.community
 ------------
 
 ## 구현화면
-![pp](https://github.com/user-attachments/assets/9d7acc0a-9136-448d-b130-f0ee1132fdde)
+![pp](https://github.com/user-attachments/assets/f06dcb32-e256-4cbe-8cd8-e907a79f14db)
+
